@@ -59,17 +59,6 @@ router.post("/login",async (req,res)=>{
     });
 });
 
-router.get("/protected",passport.authenticate('jwt',{session:false}),(req,res)=>{
-    return res.status(200).send({
-        success:true,
-        user : {
-            id : req.user._id,
-            user : req.user.username,
-        }
-
-    })
-})
-
 router.get("/",(req,res)=>{
     res.send("Hello, I am Users Controller");
 })

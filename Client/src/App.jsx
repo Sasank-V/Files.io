@@ -7,38 +7,48 @@ import { ThemeProvider } from './components/theme-provider';
 import HomePage from '@/pages/HomePage';
 import LearnPage from '@/pages/LearnPage';
 import { Subject } from './components/subject';
-import SyllabusComponent from './components/subject/SyllabusComponent';
-import LessonPlan from './components/subject/LessonPlan';
-import TheoryComponent from './components/subject/TheoryComponent';
-import LabsComponent from './components/subject/LabsComponent';
-import AssignmentsComponent from './components/subject/AssignmentsComponent';
-import ModelQPComponent from './components/subject/ModelQPComponent';
-import TutorialVideosComponent from './components/subject/TutorialVideosComponent';
 import NotFound from './pages/404NotFound';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import QueriesPage from './pages/QueriesPage';
 import QueriesAdminPage from './pages/QueriesAdminPage';
+import TeacherHomePage from './pages/TeacherHomePage';
+import DynamicSubjectComponent from './pages/DynamicSubjectPage';
+import DynamicUploadPage from './pages/DynamicUploadPage';
 
 const App = () => {
+  const isAdmin = 1;
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route element={<Layout />}>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={isAdmin ? <TeacherHomePage /> : <HomePage />} />
         <Route path="/learn" element={<LearnPage />} />
         <Route path="/subject" element={<Subject />}>
-          <Route index element={<Navigate to="/subject/0" />} />
-          <Route path="0" element={<SyllabusComponent />}></Route>
-          <Route path="1" element={<LessonPlan />}></Route>
-          <Route path="2" element={<TheoryComponent />}></Route>
-          <Route path="3" element={<LabsComponent />}></Route>
-          <Route path="4" element={<AssignmentsComponent />}></Route>
-          <Route path="5" element={<ModelQPComponent />}></Route>
-          <Route path="6" element={<TutorialVideosComponent />}></Route>
+          {
+            !isAdmin ?
+              <>
+                <Route index element={<Navigate to="/subject/0" />} />
+                <Route path=":id" element={<DynamicSubjectComponent />}></Route>
+              </>
+              :
+              <>
+                <Route index element={<Navigate to="/upload/0" />} />
+                <Route path=":id" element={<Navigate to="/upload/0" />}></Route>
+              </>
+          }
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/queries" element={<QueriesAdminPage />} />
+        <Route path="/queries" element={isAdmin ? <QueriesAdminPage /> : <QueriesPage />} />
+        {
+          isAdmin &&
+          <Route path="/upload" element={<Subject isUpload={true} />} >
+            <Route index element={<Navigate to="/upload/0" />} />
+            <Route path=":id" element={<DynamicUploadPage />} />
+          </Route>
+        }
+
         <Route path="*" element={<NotFound />} />
       </Route >
     )

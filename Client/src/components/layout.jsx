@@ -53,8 +53,12 @@ const Layout = ({
                     className="pl-8 md:w-[300px] lg:w-[300px]" />
                 </div>
               </div> */}
-            <Button variant="outline" className="bg-[#333333] border-0 text-white hover:bg-[#666666] hover:text-white">Login</Button>
-            <Button variant="outline" className="bg-[rgb(255,161,98)] text-white border-0">Register</Button>
+            <Link to="/login">
+              <Button variant="outline" className="bg-[#333333] border-0 text-white hover:bg-[#666666] hover:text-white">Login</Button>
+            </Link>
+            <Link to="/signup">
+              <Button variant="outline" className="bg-[rgb(255,161,98)] text-white border-0">Register</Button>
+            </Link>
           </div>
         </div>
       </header>

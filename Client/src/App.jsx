@@ -15,16 +15,18 @@ import AssignmentsComponent from './components/subject/AssignmentsComponent';
 import ModelQPComponent from './components/subject/ModelQPComponent';
 import TutorialVideosComponent from './components/subject/TutorialVideosComponent';
 import NotFound from './pages/404NotFound';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import QueriesPage from './pages/QueriesPage';
+import QueriesAdminPage from './pages/QueriesAdminPage';
 
 const App = () => {
-  const [pageNumber, setPageNumber] = useState(0)
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/learn" element={<LearnPage />} />
-        <Route path="/subject" element={<Subject pageNumber={pageNumber} setPageNumber={setPageNumber} />}>
+        <Route path="/subject" element={<Subject />}>
           <Route index element={<Navigate to="/subject/0" />} />
           <Route path="0" element={<SyllabusComponent />}></Route>
           <Route path="1" element={<LessonPlan />}></Route>
@@ -34,6 +36,9 @@ const App = () => {
           <Route path="5" element={<ModelQPComponent />}></Route>
           <Route path="6" element={<TutorialVideosComponent />}></Route>
         </Route>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/queries" element={<QueriesAdminPage />} />
         <Route path="*" element={<NotFound />} />
       </Route >
     )

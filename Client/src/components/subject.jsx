@@ -5,7 +5,7 @@ import { Outlet, NavLink } from 'react-router-dom';
 import SyllabusComponent from '@/components/subject/SyllabusComponent';
 
 
-export function Subject({ subject = 'Mathematics', pageNumber, setPageNumber }) {
+export function Subject({ subject = 'Mathematics' }) {
 
   return (
     (<div className="container mx-auto px-4 py-8">

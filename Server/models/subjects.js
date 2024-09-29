@@ -4,16 +4,23 @@ const Schema = mongoose.Schema;
 const Material = "Material";
 const Module = "Module";
 
-const defaultImage = ""
-
 const subjectSchema = new Schema({
+    admin : {
+        type:Schema.Types.ObjectId,
+        ref : "User",
+        required:true,
+    },
     name : {
         type : String,
         required : true,
     },
+    code : {
+        type:String,
+        required: true,
+    },
     img : {
-        url : String,
-        default : defaultImage,
+        type : String,
+        default: "",
     },
     syllabus : {
         type : Schema.Types.ObjectId,

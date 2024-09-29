@@ -17,7 +17,10 @@ const moduleSchema = new Schema({
         type : String,
         required : true,
     },
-    desc : String,
+    desc : {
+        type : String,
+        required : true,
+    },
     materials : [{
         type : Schema.Types.ObjectId,
         ref : Material,

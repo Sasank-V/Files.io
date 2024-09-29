@@ -14,6 +14,10 @@ const querySchema = new Schema({
         required:true,
         ref : User,
     },
+    date : {
+        type:Date,
+        default: new Date()
+    },
     ques : {
         type: String,
         required: true,

@@ -20,12 +20,11 @@ router.get("/learn/:id",async (req,res)=>{
     try {
         const subjectId = req.params.id; 
         const subject = await Subject.findById(subjectId)
-            .populate('syllabus')        // Populates the syllabus field
+            .populate('syllabus')       // Populates the syllabus field
             .populate('lessonPlan')      // Populates the lessonPlan field
             .populate('files')           // Populates the files array
             .populate('modelQP')         // Populates the modelQP array
             .populate('refLinks');       // Populates the refLinks array
-
         if (!subject) {
             return res.status(404).send({
                 success: false,

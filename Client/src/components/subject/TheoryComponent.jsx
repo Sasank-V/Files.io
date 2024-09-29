@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/button'
 import { Download, FileText, Video, Presentation } from 'lucide-react'
 
 const units = [
-    'Unit 1: Introduction',
-    'Unit 2: Fundamentals',
-    'Unit 3: Advanced Concepts',
-    'Unit 4: Applications',
-    'Unit 5: Case Studies',
-    'Unit 6: Modern Developments',
-    'Unit 7: Research Methods',
-    'Unit 8: Future Directions',
+    'Module 1',
+    'Module 2',
+    'Module 3',
+    'Module 4',
+    'Module 5',
+    'Module 6',
+    'Module 7',
+    'Module 8',
 ]
 
 const materials = [

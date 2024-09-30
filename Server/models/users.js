@@ -33,6 +33,10 @@ const userSchema = new Schema({
             ref: Subject,
         }
     ],
+    refresh_token : {
+        type: String,
+        default: ""
+    }
 });
 
 const User = mongoose.model("User",userSchema);

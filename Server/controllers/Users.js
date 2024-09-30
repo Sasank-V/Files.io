@@ -11,69 +11,32 @@ import Query from "../models/queries.js";
 
 dotenv.config()
 
-//Format
-//{username : "" , password : "" , email : ""}
-router.post("/signup",async (req,res)=>{
-    let {err} = userSchema.validate(req.body);
-    if(err){
-        res.status(400).send("Send a Valid Object");
-        return;
-    }else{
-        let passHash = await hash(req.body.password,10);
-        let newUser = new User({
-            username: req.body.username,
-            password: passHash,
-            email : req.body.email,
-            isAdmin:true,
-        });
-        await newUser.save();
-        res.status(200).send("User Successfully Registered");
-        return;
-    }
-});
-
-//Format
-//{email: "",password : ""}
-router.post("/login",async (req,res)=>{
-    let user = await User.findOne({email: req.body.email})
-    if(!user){
-        return res.status(404).send({
-            success : false,
-            message : "Could not find the user",
-        });
-    }
-    let cmp = await compare(req.body.password,user.password);
-    if(!cmp){
-        return res.status(401).send({
-            success : false,
-            message : "Incorrect password",
-        });
-    }
-    const payload = {
-        username : user.username,
-        id : user._id
-    }
-    const token = jwt.sign(payload,process.env.JWTSECRET_KEY,{expiresIn:"1d"});
-    return res.status(200).send({
-        success : true,
-        message : "Logged in successfully!",
-        token : "Bearer " + token,
-        userId : user._id,
-    });
-});
-
-const requireAuth = passport.authenticate('jwt',{session:false});
+const requireAuth = (req, res, next) => {
+    passport.authenticate('jwt', { session: false }, (err, user, info) => {
+        if (err || !user) {
+            return res.status(401).send({
+                success: false,
+                message: 'Unauthorized',
+            });
+        }
+        req.user = user; // Attach the user to the request object
+        next();
+    })(req, res, next);
+};
 
 //Give user mongo _id as in query
 //Get all users Queries
-router.get("/query",requireAuth, async (req,res)=>{
+router.get("/query", async (req,res)=>{
+    console.log("sd")
     try{
-        const { id } = req.query;
+        const { id } = req.body;
         const user = await User.findById(id).populate("queries");
+        // console.log(id)
         if(!user){
             return res.status(404).send({
                 success : false,
                 message : "Could not find the user",
+                test: req.query
             });
         }
         const queries = user.queries;

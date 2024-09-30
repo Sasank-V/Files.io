@@ -1,19 +1,59 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { toast } from 'react-toastify'
+
+const url = "http://localhost:8080/api"
 
 const LoginPage = () => {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
 
-    const handleSubmit = () => {
-        e.preventDefault()
-        // Handle login logic here
-        console.log('Login attempted with:', email, password)
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // Handle signup logic here
+        const user = {
+            password: password,
+            email: email
+        }
+
+        try {
+            const url = `${import.meta.env.VITE_REACT_API_URL}/auth/login`;
+
+            // console.log(url)
+
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            });
+
+            const json = await res.json();
+
+            if (res.ok) {
+                navigate("/");
+                console.log(json)
+                toast.success(json.message, { position: 'top-right' })
+            } else if (res.status == 401) {
+                toast.error(json.message, { position: 'top-right' })
+            } else {
+                toast.error("Signup failed", { position: 'top-right' })
+            }
+        } catch (error) {
+            console.log("Df")
+            toast.error(error.message, { position: 'top-right' })
+        }
+
+
     }
 
     const togglePasswordVisibility = () => {

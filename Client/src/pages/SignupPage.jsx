@@ -1,22 +1,115 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { toast } from 'react-toastify';
 
 const SignupPage = () => {
+    const navigate = useNavigate();
+
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [errors, setErrors] = useState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    })
+    const [isFormValid, setIsFormValid] = useState(false)
 
-    const handleSubmit = () => {
+    const validateName = (value) => {
+        if (value.trim().length < 2) {
+            return 'Name must be at least 2 characters long'
+        }
+        return ''
+    }
+
+    const validateEmail = (value) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(value)) {
+            return 'Please enter a valid email address'
+        }
+        return ''
+    }
+
+    const validatePassword = (value) => {
+        if (value.length < 8) {
+            return 'Password must be at least 8 characters long'
+        }
+        return ''
+    }
+
+    const validateConfirmPassword = (value) => {
+        if (value !== password) {
+            return 'Passwords do not match'
+        }
+        return ''
+    }
+
+    useEffect(() => {
+        const nameError = validateName(name)
+        const emailError = validateEmail(email)
+        const passwordError = validatePassword(password)
+        const confirmPasswordError = validateConfirmPassword(confirmPassword)
+
+        setErrors({
+            name: nameError,
+            email: emailError,
+            password: passwordError,
+            confirmPassword: confirmPasswordError
+        })
+
+        setIsFormValid(
+            !nameError && !emailError && !passwordError && !confirmPasswordError &&
+            name.trim() !== '' && email.trim() !== '' && password !== '' && confirmPassword !== ''
+        )
+    }, [name, email, password, confirmPassword])
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        // Handle signup logic here
-        console.log('Signup attempted with:', name, email, password, confirmPassword)
+        if (isFormValid) {
+            // Handle signup logic here
+            const user = {
+                username: name,
+                password: password,
+                email: email
+            }
+
+            try {
+                const url = `${import.meta.env.VITE_REACT_API_URL}/auth/signup`;
+
+                // console.log(url)
+
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                });
+
+                const json = await res.json();
+
+                if (res.ok) {
+                    navigate("/login");
+                    toast.success(json.message, { position: 'top-right' })
+                } else if (res.status == 409) {
+                    toast.error(json.message, { position: 'top-right' })
+                } else {
+                    toast.error("Signup failed", { position: 'top-right' })
+                }
+            } catch (error) {
+                console.log("Df")
+                toast.error(error.message, { position: 'top-right' })
+            }
+
+        }
     }
 
     const togglePasswordVisibility = () => {
@@ -50,6 +143,7 @@ const SignupPage = () => {
                                     required
                                     className="w-full bg-white px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#fe965e]"
                                 />
+                                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                             </div>
                             <div className='space-y-2'>
                                 <Label htmlFor="email">Email</Label>
@@ -62,6 +156,7 @@ const SignupPage = () => {
                                     required
                                     className="w-full bg-white px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#fe965e]"
                                 />
+                                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                             </div>
                             <div className='space-y-2'>
                                 <Label htmlFor="password">Password</Label>
@@ -88,6 +183,7 @@ const SignupPage = () => {
                                         )}
                                     </button>
                                 </div>
+                                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                             </div>
                             <div className='space-y-2'>
                                 <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -114,10 +210,15 @@ const SignupPage = () => {
                                         )}
                                     </button>
                                 </div>
+                                {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
                             </div>
                         </div>
                         <div className='flex justify-center mt-[50px] w-full'>
-                            <Button type="submit" className="w-[200px] bg-[#fe965e] rounded-full p-3 text-lg text-white text-center">
+                            <Button
+                                type="submit"
+                                className="w-[200px] bg-[#fe965e] rounded-full p-3 text-lg text-white text-center"
+                                disabled={!isFormValid}
+                            >
                                 Sign Up
                             </Button>
                         </div>

@@ -5,6 +5,8 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Search, Menu } from 'lucide-react'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 const Layout = ({
   children
@@ -18,7 +20,7 @@ const Layout = ({
 
 
   return (
-    (<div className="flex flex-col w-[100vw] h-max bg-[rgb(252,239,231)] min-h-screen">
+    <div className="flex flex-col w-[100vw] h-max bg-[rgb(252,239,231)] min-h-screen">
       <header
         className="sticky top-0 z-50 w-[100vw] border-b bg-inherit"
       >
@@ -70,7 +72,11 @@ const Layout = ({
       <div className='h-[20vh] flex-grow-0 flex w-full bg-black text-white p-10'>
         This is the footer
       </div>
-    </div >)
+
+      <div className="absolute bg-red-100 z-100">
+        <ToastContainer />
+      </div>
+    </div >
   );
 }
 

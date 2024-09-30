@@ -16,8 +16,8 @@ const verifyJWT = (req, res, next) => {
     // console.log("sdf")
     const authHeader = req.headers['authorization'];
     if (!authHeader) return res.sendStatus(401);
-    console.log(authHeader)
-    const token = authHeader.split(' ')[1];
+    // console.log(authHeader)
+    const token = authHeader;
     jwt.verify(
         token,
         process.env.JWTSECRET_KEY,
@@ -26,7 +26,8 @@ const verifyJWT = (req, res, next) => {
             // console.log(decoded)
             req.body = {
                 id: decoded.id,
-                user: decoded.username
+                user: decoded.username,
+                data : req.body,
             }
             next();
         }
@@ -43,7 +44,7 @@ app.use(cors({
 }));
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
-app.use(passport.initialize());
+// app.use(passport.initialize());
 
 app.use("/api/auth",authRouter);
 app.use("/api/user", verifyJWT, userRouter);

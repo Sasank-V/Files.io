@@ -30,21 +30,15 @@ const subjectSchema = new Schema({
         type : Schema.Types.ObjectId,
         ref:Material,
     },
-    files : [
+    components : [
         {
             type: Schema.Types.ObjectId,
             ref : Module,
         }
     ],
-    modelQP : [
+    extra : [
         {
-            type:Schema.Types.ObjectId,
-            ref : Material,
-        }
-    ],
-    refLinks : [
-        {
-            type:Schema.Types.ObjectId,
+            type : Schema.Types.ObjectId,
             ref : Material,
         }
     ]

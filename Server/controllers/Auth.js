@@ -8,6 +8,8 @@ import jwt from "jsonwebtoken";
 import passport from "../utils/passport/jwtStrategy.js";
 import dotenv from "dotenv";
 import Query from "../models/queries.js";
+//To do
+//Remove isAdmin to true while signup
 
 dotenv.config()
 

@@ -4,7 +4,7 @@ const router = express.Router();
 import Subject from "../models/subjects.js";
 
 //Get all the subject card details
-router.get("/learn",async (req,res)=>{
+router.get("/all",async (req,res)=>{
     let subs = await Subject.find();
     let result = subs.map((sub)=>({
         name : sub.name,
@@ -16,7 +16,7 @@ router.get("/learn",async (req,res)=>{
 });
 
 //Get induvidual subject details
-router.get("/learn/:subId",async (req,res)=>{
+router.get("/get/:subId",async (req,res)=>{
     try {
         const subjectId = req.params.subId; 
         const subject = await Subject.findById(subjectId)

@@ -4,12 +4,14 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
 import connectDB from "./database.js";
-import userRouter from "./controllers/Users.js";
-import commonRouter from "./controllers/Common.js";
+import  queryRouter from "./controllers/Query.js";
+import learnRouter from "./controllers/Learn.js";
 import adminRouter from "./controllers/Admin.js";
 import authRouter from "./controllers/Auth.js";
 import passport from "./utils/passport/jwtStrategy.js";
 
+//To do at the end
+//Remove the parameter isAdmin set to true for all the users signing up in Auth.js
 
 
 const verifyJWT = (req, res, next) => {
@@ -34,7 +36,6 @@ const verifyJWT = (req, res, next) => {
     );
 }
 
-
 const app = express();
 connectDB();
 
@@ -47,8 +48,8 @@ app.use(express.json());
 // app.use(passport.initialize());
 
 app.use("/api/auth",authRouter);
-app.use("/api/user", verifyJWT, userRouter);
-app.use("/api/com", verifyJWT, commonRouter);
+app.use("/api/query", verifyJWT, queryRouter);
+app.use("/api/learn", verifyJWT, learnRouter);
 app.use("/api/admin", verifyJWT, adminRouter);
 
 app.get("/",(req,res)=>{

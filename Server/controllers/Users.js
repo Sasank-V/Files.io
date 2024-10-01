@@ -2,24 +2,46 @@ import express from "express";
 const router = express.Router();
 
 import User from "../models/users.js"
-import {userSchema,querySchema} from "../Schema.js";
+import { querySchema } from "../Schema.js";
 import { compare, compareSync, hash } from "bcrypt";
 import passport from "../utils/passport/jwtStrategy.js";
 import Query from "../models/queries.js";
 
 
+router.get("/me", async (req, res) => {
+    const cookies = req.cookies;
+
+    if (!cookies?.jwt) {
+        return res.sendStatus(204);
+    }
+
+    const refresh_token = cookies.jwt;
+
+    const foundUser = await User.findOne({ refresh_token: refresh_token });
+    if (!foundUser) {
+        res.clearCookie('jwt', { httpOnly: true });
+        return res.sendStatus(204);
+    }
+
+    return res.status(201).send({
+        id: foundUser._id,
+        name: foundUser.username,
+        email: foundUser.email,
+    })
+});
+
 //Give user mongo _id as in query
 //Get all users Queries
-router.get("/query", async (req,res)=>{
+router.get("/query", async (req, res) => {
     console.log("sd")
-    try{
+    try {
         const { id } = req.body;
         const user = await User.findById(id).populate("queries");
         // console.log(id)
-        if(!user){
+        if (!user) {
             return res.status(404).send({
-                success : false,
-                message : "Could not find the user",
+                success: false,
+                message: "Could not find the user",
                 test: req.query
             });
         }
@@ -28,7 +50,7 @@ router.get("/query", async (req,res)=>{
             success: true,
             queries,
         });
-    }catch(error){
+    } catch (error) {
         console.error(error);
         return res.status(500).send({
             success: false,
@@ -37,12 +59,11 @@ router.get("/query", async (req,res)=>{
     }
 })
 
-//Get all the admins name and _id
 router.get("/query/admins", async (req,res)=>{
     const admins = await User.find({isAdmin:true});
     const result = admins.map((admin) => ({
-        name : admin.username,
-        id : admin._id, 
+        name: admin.username,
+        id: admin._id,
     }));
     res.send(result);
 })
@@ -53,7 +74,6 @@ router.get("/query/admins", async (req,res)=>{
 router.post("/query",async (req, res) => {
     try {
         const { from, to, ques } = req.body.data;
-        
         // Validate request body with Joi
         const { error } = querySchema.validate(req.body.data);
         if (error) {
@@ -107,7 +127,7 @@ router.post("/query",async (req, res) => {
 });
 
 
-router.get("*",(req,res)=>{
+router.get("*", (req, res) => {
     res.status(404).send("Oops , Route Not Found");
 });
 

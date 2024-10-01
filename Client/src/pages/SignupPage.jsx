@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'react-toastify';
+import axios from 'axios'
+
 
 const SignupPage = () => {
     const navigate = useNavigate();
@@ -74,40 +76,34 @@ const SignupPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         if (isFormValid) {
-            // Handle signup logic here
             const user = {
                 username: name,
                 password: password,
                 email: email
-            }
+            };
 
-            try {
-                const url = `${import.meta.env.VITE_REACT_API_URL}/auth/signup`;
+            const url = `${import.meta.env.VITE_REACT_API_URL}/auth/signup`;
 
-                // console.log(url)
-
-                const res = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(user)
-                });
-
-                const json = await res.json();
-
-                if (res.ok) {
-                    navigate("/login");
-                    toast.success(json.message, { position: 'top-right' })
-                } else if (res.status == 409) {
-                    toast.error(json.message, { position: 'top-right' })
-                } else {
-                    toast.error("Signup failed", { position: 'top-right' })
+            axios.post(url, user, {
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-            } catch (error) {
-                console.log("Df")
-                toast.error(error.message, { position: 'top-right' })
-            }
+            })
+                .then((res) => {
+                    const json = res.data;
+
+                    if (res.status === 200) {
+                        navigate("/login");
+                        toast.success(json.message, { position: 'top-right' });
+                    }
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 409) {
+                        toast.error(error.response.data.message, { position: 'top-right' });
+                    } else {
+                        toast.error("Signup failed", { position: 'top-right' });
+                    }
+                });
 
         }
     }

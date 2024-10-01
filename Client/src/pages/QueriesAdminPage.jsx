@@ -18,7 +18,7 @@ const TeacherQueriesPage = () => {
     const [currentAnswer, setCurrentAnswer] = useState('')
     const [selectedQuery, setSelectedQuery] = useState(null)
 
-    const handleAnswerSubmit = () => {
+    const handleAnswerSubmit = (e) => {
         e.preventDefault()
         if (currentAnswer.trim() && selectedQuery) {
             setQueries(queries.map(query =>

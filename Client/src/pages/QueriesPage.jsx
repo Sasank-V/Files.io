@@ -19,7 +19,7 @@ const QueriesPage = () => {
         { id: 8, question: "What are the key features of ES6?", answer: null, answered: false }
     ])
 
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
         e.preventDefault()
         if (query.trim()) {
             setQueries([...queries, { id: queries.length + 1, question: query, answer: null, answered: false }])

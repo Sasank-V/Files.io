@@ -13,6 +13,10 @@ const moduleSchema = new Schema({
         type: Number,
         required : true,
     },
+    no : {
+        type: Number,
+        required : true,
+    },
     title : {
         type : String,
         required : true,
@@ -21,7 +25,7 @@ const moduleSchema = new Schema({
         type : String,
         required : true,
     },
-    materials : [{
+    mats : [{
         type : Schema.Types.ObjectId,
         ref : Material,
     }]

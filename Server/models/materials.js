@@ -5,10 +5,6 @@ const materialSchema = new Schema({
         type:String,
         required : true,
     },
-    type : { // 0 - Syllabus , 1 - Lesson Plan , 2 - Model QP , 3 - Refernence Links ,  5 - Part of components          
-        type : String,
-        required : true,
-    },
     url : {
         type : String,
         required : true,

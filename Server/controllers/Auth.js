@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 import User from "../models/users.js"
-import {userSchema,querySchema} from "../Schema.js";
+import { userSchema, querySchema } from "../Schema.js";
 import { compare, compareSync, hash } from "bcrypt";
 import jwt from "jsonwebtoken";
 import passport from "../utils/passport/jwtStrategy.js";
@@ -15,13 +15,13 @@ dotenv.config()
 
 //Format
 //{username : "" , password : "" , email : ""}
-router.post("/signup", async (req,res)=>{
-    let {err} = userSchema.validate(req.body);
-    if(err) {
+router.post("/signup", async (req, res) => {
+    let { err } = userSchema.validate(req.body);
+    if (err) {
         res.status(400).send("Send a Valid Object");
         return;
     } else {
-        const user = await User.findOne({email: req.body.email});
+        const user = await User.findOne({ email: req.body.email });
         if (user) {
             res.status(409).send({
                 success: false,
@@ -30,12 +30,11 @@ router.post("/signup", async (req,res)=>{
             return;
         }
 
-        let passHash = await hash(req.body.password,10);
+        let passHash = await hash(req.body.password, 10);
         let newUser = new User({
             username: req.body.username,
             password: passHash,
-            email : req.body.email,
-            isAdmin:true,
+            email: req.body.email,
         });
         await newUser.save();
         res.status(200).send({
@@ -55,7 +54,7 @@ const cookieOptions = {
 
 //Format
 //{email: "",password : ""}
-router.post("/login",async (req,res)=>{
+router.post("/login", async (req, res) => {
     let user = await User.findOne({ email: req.body.email });
     if (!user) {
         return res.status(404).send({
@@ -71,12 +70,13 @@ router.post("/login",async (req,res)=>{
         });
     }
     const payload = {
-        username: user.username,
-        id: user._id,
+        "username": user.username,
+        "id": user._id,
     };
-    const access_token = jwt.sign(payload, process.env.JWTSECRET_KEY, { expiresIn: "1d" });
-    const refresh_token = jwt.sign(payload, process.env.JWTSECRET_KEY, { expiresIn: "1d" });
-    
+
+    const access_token = jwt.sign(payload, process.env.JWTSECRET_KEY, { expiresIn: process.env.ACCESS_TOKEN_EXPIRY });
+    const refresh_token = jwt.sign(payload, process.env.JWTSECRET_KEY, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY });
+
     try {
         await User.updateOne({ _id: user._id }, { refresh_token: refresh_token });
     } catch (error) {
@@ -86,50 +86,40 @@ router.post("/login",async (req,res)=>{
             message: "Error updating refresh token",
         });
     }
-    // Set the token as an HTTP-only cookie
-    // res.cookie('token', token, cookieOptions);
-
     res.cookie('jwt', refresh_token, cookieOptions);
 
     return res.status(200).send({
         success: true,
-        message: "Logged in successfully!",
+        message: "Successfully logged in",
         access_token: access_token,
+        isAdmin: user.isAdmin
     });
-
-    // let user = await User.findOne({ email: req.body.email });
-    // if (!user) {
-    //     return res.status(404).send({
-    //         success: false,
-    //         message: "Could not find the user",
-    //     });
-    // }
-    // let cmp = await compare(req.body.password, user.password);
-    // if (!cmp) {
-    //     return res.status(401).send({
-    //         success: false,
-    //         message: "Incorrect password",
-    //     });
-    // }
-    // const payload = {
-    //     username: user.username,
-    //     id: user._id,
-    // };
-    // const token = jwt.sign(payload, process.env.JWTSECRET_KEY, { expiresIn: "1d" });
-
-    // // Set the token as an HTTP-only cookie
-    // res.cookie('token', token, cookieOptions);
-
-    // return res.status(200).send({
-    //     success: true,
-    //     message: "Logged in successfully!",
-    //     userId: user._id,
-    // });
 });
 
 
 
-router.get("*",(req,res)=>{
+router.get("/logout", async (req, res) => {
+    const cookies = req.cookies;
+
+    if (!cookies?.jwt) {
+        return res.sendStatus(204);
+    }
+
+    const refresh_token = cookies.jwt;
+
+    const foundUser = await User.findOne({ refresh_token: refresh_token });
+    if (!foundUser) {
+        res.clearCookie('jwt', { httpOnly: true });
+        return res.sendStatus(204);
+    }
+
+    await User.updateOne({ _id: foundUser._id }, { refresh_token: '' });
+    res.clearCookie('jwt', { httpOnly: true });
+    res.sendStatus(204);
+});
+
+
+router.get("*", (req, res) => {
     res.status(404).send("Oops , Route Not Found");
 });
 

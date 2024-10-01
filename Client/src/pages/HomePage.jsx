@@ -1,10 +1,23 @@
-
-import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
+import useAxiosPrivate from '@/hooks/useAxiosPrivate'
+import useLogout from '@/hooks/useLogout';
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 
 const HomePage = () => {
+    const axiosPrivate = useAxiosPrivate();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const logout = useLogout();
 
+    const handleClick = async () => {
+        try {
+            const response = await axiosPrivate.get("/user/me");
+            console.log(response)
+        } catch (err) {
+            await logout();
+            navigate("/login", { state: { from: location }, replace: true });
+        }
+    }
 
     return (
         <main className='flex w-full h-full overflow-y-scroll'>
@@ -19,6 +32,9 @@ const HomePage = () => {
                         <Link to="/learn" variant="outline" className="w-[200px] bg-[#fe965e] rounded-full p-3 text-lg text-white text-center">
                             Learn
                         </Link>
+                        <div onClick={handleClick} className="w-[200px] bg-[#fe965e] rounded-full p-3 text-lg text-white text-center">
+                            Learn
+                        </div>
                     </div>
                 </div>
             </div>

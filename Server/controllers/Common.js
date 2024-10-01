@@ -16,15 +16,14 @@ router.get("/learn",async (req,res)=>{
 });
 
 //Get induvidual subject details
-router.get("/learn/:id",async (req,res)=>{
+router.get("/learn/:subId",async (req,res)=>{
     try {
-        const subjectId = req.params.id; 
+        const subjectId = req.params.subId; 
         const subject = await Subject.findById(subjectId)
             .populate('syllabus')       // Populates the syllabus field
             .populate('lessonPlan')      // Populates the lessonPlan field
-            .populate('files')           // Populates the files array
-            .populate('modelQP')         // Populates the modelQP array
-            .populate('refLinks');       // Populates the refLinks array
+            .populate('components')           // Populates the files array
+            .populate('extra')         // Populates the modelQP array
         if (!subject) {
             return res.status(404).send({
                 success: false,

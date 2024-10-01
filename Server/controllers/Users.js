@@ -4,25 +4,9 @@ const router = express.Router();
 import User from "../models/users.js"
 import { querySchema } from "../Schema.js";
 import { compare, compareSync, hash } from "bcrypt";
-import jwt from "jsonwebtoken";
 import passport from "../utils/passport/jwtStrategy.js";
-import dotenv from "dotenv";
 import Query from "../models/queries.js";
 
-dotenv.config()
-
-const requireAuth = (req, res, next) => {
-    passport.authenticate('jwt', { session: false }, (err, user, info) => {
-        if (err || !user) {
-            return res.status(401).send({
-                success: false,
-                message: 'Unauthorized',
-            });
-        }
-        req.user = user; // Attach the user to the request object
-        next();
-    })(req, res, next);
-};
 
 router.get("/me", async (req, res) => {
     const cookies = req.cookies;
@@ -75,9 +59,8 @@ router.get("/query", async (req, res) => {
     }
 })
 
-//Get all the admins name and _id
-router.get("/query/admins", requireAuth, async (req, res) => {
-    const admins = await User.find({ isAdmin: true });
+router.get("/query/admins", async (req,res)=>{
+    const admins = await User.find({isAdmin:true});
     const result = admins.map((admin) => ({
         name: admin.username,
         id: admin._id,
@@ -88,12 +71,11 @@ router.get("/query/admins", requireAuth, async (req, res) => {
 //Post a query
 //Format
 //{from : user_id , to: user_id , ques : ""}
-router.post("/query", requireAuth, async (req, res) => {
+router.post("/query",async (req, res) => {
     try {
-        const { from, to, ques } = req.body;
-
+        const { from, to, ques } = req.body.data;
         // Validate request body with Joi
-        const { error } = querySchema.validate(req.body);
+        const { error } = querySchema.validate(req.body.data);
         if (error) {
             return res.status(400).send("Send a valid object");
         }

@@ -16,7 +16,9 @@ import passport from "./utils/passport/jwtStrategy.js";
 const verifyJWT = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     if (!authHeader) return res.sendStatus(401);
+  
     const token = authHeader.split(' ')[1];
+  
     jwt.verify(
         token,
         process.env.JWTSECRET_KEY,
@@ -27,7 +29,8 @@ const verifyJWT = (req, res, next) => {
             }
             req.body = {
                 id: decoded.id,
-                user: decoded.username
+                user: decoded.username,
+                data : req.body,
             }
             next();
         }

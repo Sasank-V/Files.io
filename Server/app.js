@@ -5,13 +5,14 @@ import jwt from "jsonwebtoken";
 import cookieParser from 'cookie-parser'
 
 import connectDB from "./database.js";
-import userRouter from "./controllers/Users.js";
-import commonRouter from "./controllers/Common.js";
+import  queryRouter from "./controllers/Query.js";
+import learnRouter from "./controllers/Learn.js";
 import adminRouter from "./controllers/Admin.js";
 import authRouter from "./controllers/Auth.js";
 import refreshRouter from "./controllers/Refresh.js";
-import passport from "./utils/passport/jwtStrategy.js";
 
+//To do at the end
+//Remove the parameter isAdmin set to true for all the users signing up in Auth.js
 
 const verifyJWT = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -37,9 +38,6 @@ const verifyJWT = (req, res, next) => {
     );
 }
 
-
-
-
 const app = express();
 connectDB();
 
@@ -50,13 +48,12 @@ app.use(cors({
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(passport.initialize());
 
 app.use("/api/auth", authRouter);
 app.use("/api/refresh", refreshRouter)
+app.use("/api/learn", learnRouter);
 app.use(verifyJWT);
-app.use("/api/user", userRouter);
-app.use("/api/com", commonRouter);
+app.use("/api/query", queryRouter);
 app.use("/api/admin", adminRouter);
 
 app.get("/", (req, res) => {

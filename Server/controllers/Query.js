@@ -4,7 +4,6 @@ const router = express.Router();
 import User from "../models/users.js"
 import { querySchema } from "../Schema.js";
 import { compare, compareSync, hash } from "bcrypt";
-import passport from "../utils/passport/jwtStrategy.js";
 import Query from "../models/queries.js";
 
 
@@ -30,12 +29,11 @@ router.get("/me", async (req, res) => {
     })
 });
 
-//Give user mongo _id as in query
 //Get all users Queries
-router.get("/query", async (req, res) => {
-    console.log("sd")
-    try {
-        const { id } = req.body;
+//id - userId 
+router.get("/all/:id", async (req,res)=>{
+    try{
+        const { id } = req.params;
         const user = await User.findById(id).populate("queries");
         // console.log(id)
         if (!user) {
@@ -59,19 +57,33 @@ router.get("/query", async (req, res) => {
     }
 })
 
-router.get("/query/admins", async (req,res)=>{
-    const admins = await User.find({isAdmin:true});
-    const result = admins.map((admin) => ({
-        name: admin.username,
-        id: admin._id,
-    }));
-    res.send(result);
+//Get all the admins name and _id
+router.get("/admins", async (req,res)=>{
+    try{
+        const admins = await User.find({isAdmin : true});
+        const result = admins.map((admin) => ({
+            name : admin.username,
+            id : admin._id, 
+        }));
+        return res.status(200).send({
+            success : true,
+            message : "Admins Successfully found",
+            data : result,
+        });
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({
+            success : false,
+            message : "Error while fetching admins",
+            data : []
+        })
+    }
 })
 
 //Post a query
 //Format
 //{from : user_id , to: user_id , ques : ""}
-router.post("/query",async (req, res) => {
+router.post("/post",async (req, res) => {
     try {
         const { from, to, ques } = req.body.data;
         // Validate request body with Joi
@@ -80,6 +92,17 @@ router.post("/query",async (req, res) => {
             return res.status(400).send("Send a valid object");
         }
 
+        // Find the 'from' and 'to' users by ID
+        const fromUser = await User.findById(from);
+        const toUser = await User.findById(to);
+        
+        if (!fromUser || !toUser) {
+            return res.status(404).send({
+                success: false,
+                message: "Users not found",
+            });
+        }
+        
         // Create a new query
         const newQuery = new Query({
             from: from,
@@ -91,16 +114,6 @@ router.post("/query",async (req, res) => {
         // Save the new query and get the newly created ID
         const savedQuery = await newQuery.save();
 
-        // Find the 'from' and 'to' users by ID
-        const fromUser = await User.findById(from);
-        const toUser = await User.findById(to);
-
-        if (!fromUser || !toUser) {
-            return res.status(404).send({
-                success: false,
-                message: "Users not found",
-            });
-        }
 
         // Push the newly created query ID into their queries array
         fromUser.queries.push(savedQuery._id);

@@ -36,12 +36,16 @@ const subjectSchema = new Schema({
             ref : Module,
         }
     ],
-    extra : [
+    moduleQp : [
         {
             type : Schema.Types.ObjectId,
-            ref : Material,
+            ref:Material,
         }
-    ]
+    ],
+    refs : [{
+        type : String,
+        default: "",
+    }]
 });
 
 const Subject = mongoose.model("Subject",subjectSchema);

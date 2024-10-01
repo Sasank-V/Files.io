@@ -1,15 +1,18 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'react-toastify'
-
-const url = "http://localhost:8080/api"
+import useAuth from '@/hooks/useAuth'
+import axios from 'axios'
 
 const LoginPage = () => {
+    const { setAuth } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -18,40 +21,32 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Handle signup logic here
-        const user = {
-            password: password,
-            email: email
-        }
+        const user = { password, email };
 
-        try {
-            const url = `${import.meta.env.VITE_REACT_API_URL}/auth/login`;
+        const url = `${import.meta.env.VITE_REACT_API_URL}/auth/login`;
 
-            // console.log(url)
+        axios.post(url, user, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((res) => {
+            const { access_token, isAdmin, message } = res.data;
 
-            const res = await fetch(url, {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            });
+            setAuth({ isAdmin, access_token });
 
-            const json = await res.json();
+            console.log(message)
 
-            if (res.ok) {
-                navigate("/");
-                console.log(json)
-                toast.success(json.message, { position: 'top-right' })
-            } else if (res.status == 401) {
-                toast.error(json.message, { position: 'top-right' })
+            toast.success(message, { position: 'top-right' });
+
+            navigate(from, { replace: true });
+        }).catch((error) => {
+            if (error.response && error.response.status === 401) {
+                toast.error(error.response.data.message, { position: 'top-right' });
             } else {
-                toast.error("Signup failed", { position: 'top-right' })
+                toast.error("Signup failed", { position: 'top-right' });
             }
-        } catch (error) {
-            console.log("Df")
-            toast.error(error.message, { position: 'top-right' })
-        }
+        });
 
 
     }

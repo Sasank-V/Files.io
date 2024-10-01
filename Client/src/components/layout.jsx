@@ -1,23 +1,24 @@
 'use client'
 
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Search, Menu } from 'lucide-react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import useAuth from '@/hooks/useAuth'
+import useLogout from '@/hooks/useLogout'
 
-const Layout = ({
-  children
-}) => {
+const Layout = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { auth } = useAuth();
+  const logout = useLogout();
+  const navigate = useNavigate();
 
-
-  // 252, 239, 231
-  // 249, 217, 198
-  // 
-
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login")
+  }
 
   return (
     <div className="flex flex-col w-[100vw] h-max bg-[rgb(252,239,231)] min-h-screen">
@@ -55,15 +56,23 @@ const Layout = ({
                     className="pl-8 md:w-[300px] lg:w-[300px]" />
                 </div>
               </div> */}
-            <Link to="/login">
-              <Button variant="outline" className="bg-[#333333] border-0 text-white hover:bg-[#666666] hover:text-white">Login</Button>
-            </Link>
-            <Link to="/signup">
-              <Button variant="outline" className="bg-[rgb(255,161,98)] text-white border-0">Register</Button>
-            </Link>
+            {!auth.access_token &&
+              <>
+                <Link to="/login">
+                  <Button variant="outline" className="bg-[#333333] border-0 text-white hover:bg-[#666666] hover:text-white">Login</Button>
+                </Link>
+                <Link to="/signup">
+                  <Button variant="outline" className="bg-[rgb(255,161,98)] text-white border-0">Register</Button>
+                </Link>
+              </>
+            }
+            {
+              auth.access_token &&
+              <Button variant="outline" className="bg-[rgb(255,161,98)] text-white border-0" onClick={handleLogout}>Logout</Button>
+            }
           </div>
         </div>
-      </header>
+      </header >
       <div>
         <div className='flex h-max min-h-[95vh] w-full'>
           <Outlet />

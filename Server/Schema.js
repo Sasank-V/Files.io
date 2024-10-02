@@ -8,7 +8,6 @@ export const userSchema = Joi.object({
 });
 
 export const querySchema = Joi.object({
-    from : Joi.string().required(),
     to : Joi.string().required(),
     ques : Joi.string().required(),
 });

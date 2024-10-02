@@ -82,10 +82,12 @@ router.get("/admins", async (req,res)=>{
 
 //Post a query
 //Format
-//{from : user_id , to: user_id , ques : ""}
+//{ to: user_id , ques : ""}
 router.post("/post",async (req, res) => {
     try {
-        const { from, to, ques } = req.body.data;
+        const { to, ques } = req.body.data;
+        const from = req.body.id;
+        console.log(from);
         // Validate request body with Joi
         const { error } = querySchema.validate(req.body.data);
         if (error) {
@@ -136,6 +138,138 @@ router.post("/post",async (req, res) => {
             success: false,
             message: "An error occurred while posting query",
         });
+    }
+});
+
+//Reply to a query / Also acts as Edit Reply for Admins
+//Only for admins
+//Format
+//{reply : ""}
+router.put("/reply/admin/:queryId",async (req,res)=>{
+    try{
+        let userId = req.body.id;
+        let {queryId} = req.params;
+        const currUser = await User.findById(userId);
+        const currQuery = await Query.findById(queryId);
+        if(!currQuery){
+            return res.status(404).send({
+                success : false,
+                message : "Query not found",
+            });
+        }
+        if(currQuery.to != userId || !currUser.isAdmin){
+            return res.status(400).send({
+                success : false,
+                message : "Unauthorised Request to Reply to a Query"
+            });
+        }
+        const data = req.body.data;
+        let reply = data.reply;
+        if(!reply || reply === ""){
+            return res.status(402).send({
+                success : false,
+                message : "Reply is Empty :("
+            });
+        }
+        currQuery.res = reply;
+        currQuery.status = true;
+        await currQuery.save();
+        return res.status(200).send({
+            success : true,
+            message : "Query Reply Saved successfully"
+        });
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({
+            success : false,
+            message : "Error while posting the reply",
+        })
+    }
+});
+
+//Change the Question by the User
+//For all users
+//Format
+//{ques : ""}
+router.put("/edit/:queryId",async (req,res)=>{
+    try{
+        let userId = req.body.id;
+        let {queryId} = req.params;
+        const currQuery = await Query.findById(queryId);
+        if(!currQuery){
+            return res.status(404).send({
+                success : false,
+                message : "Query not found"
+            });
+        }
+        if(currQuery.from != userId){
+            return res.status(400).send({
+                success : false,
+                message : "Unathorised Request to Edit a Query"
+            })
+        }
+        if(currQuery.status){
+            return res.status(402).send({
+                success : false,
+                message : "Question has already been replied , Create a NewQuery",
+            })
+        }
+        const modifiedQues = req.body.data.ques;
+        if(!modifiedQues){
+            return res.status(402).send({
+                success : false,
+                message : "Question is Empty :("
+            });
+        }
+        currQuery.ques = modifiedQues;
+        await currQuery.save();
+        return res.status(200).send({
+            success : true,
+            message : "Query Question Updated Successfully"
+        });
+    }catch(err){
+        return res.status(200).send({
+            success : false,
+            message : "Error while updating questio of a query"
+        })
+    }
+});
+
+//Delete a query
+//Can be done by either fromUser or toUser
+router.delete("/delete/:queryId",async (req,res)=>{
+    try{
+        let userId = req.body.id;
+        let {queryId} = req.params;
+        const currQuery = await Query.findById(queryId);
+        if(!currQuery){
+            return res.status(404).send({
+                success : false,
+                message : "Query not found",
+            });
+        }
+        if(currQuery.from != userId && currQuery.to != userId){
+            return res.status(400).send({
+                success : false,
+                message : "Unauthorised Request to delete a query"
+            });
+        }
+        const fromUser = await User.findById(currQuery.from);
+        const toUser = await User.findById(currQuery.to);
+    
+        fromUser.queries = fromUser.queries.filter((qId)=>(qId != queryId));
+        toUser.queries = toUser.queries.filter((qId)=>(qId != queryId));
+        await Query.findByIdAndDelete(queryId);
+        return res.status(200).send({
+            success : true,
+            message : "Query Deleted Successfully"
+        });
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({
+            success : false,
+            message : "Error while deleting query"
+        })
     }
 });
 

@@ -2,11 +2,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
 
-const LessonPlan = ({ subject }) => {
+const LessonPlan = ({ subjectId }) => {
     const handleDownload = () => {
         // This is a placeholder function for the download logic
         // In a real application, you would implement the actual download functionality here
-        console.log(`Downloading ${subject} lesson plan PDF`)
+        console.log(`Downloading ${subjectId} lesson plan PDF`)
         // For example, you might use:
         // window.open('/path/to/lesson-plan.pdf', '_blank')
     }
@@ -17,7 +17,7 @@ const LessonPlan = ({ subject }) => {
                 <div className="flex justify-between items-center">
                     <div>
                         <CardTitle className="text-2xl font-bold text-[#fe965e]">Lesson Plan</CardTitle>
-                        <CardDescription className="mt-1">Download the weekly lesson plan for {subject}</CardDescription>
+                        <CardDescription className="mt-1">Download the weekly lesson plan for {subjectId}</CardDescription>
                     </div>
                 </div>
             </CardHeader>

@@ -1,6 +1,6 @@
 import LoadingComponent from '@/components/loading';
 import React, { lazy, Suspense } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 // Lazy loading the components for better performance
 const SyllabusComponent = lazy(() => import('@/components/subject/SyllabusComponent'));
@@ -26,13 +26,16 @@ const DynamicSubjectComponent = () => {
     const { id } = useParams();
     const SubjectComponent = componentMap[id];
 
+    const subjectId = new URLSearchParams(location.search).get("id");
+
+
     if (!SubjectComponent) {
         return <div>Invalid subject type!</div>;
     }
 
     return (
         <Suspense fallback={<LoadingComponent />}>
-            <SubjectComponent />
+            <SubjectComponent subjectId={subjectId} />
         </Suspense>
         // <LoadingComponent />
     );

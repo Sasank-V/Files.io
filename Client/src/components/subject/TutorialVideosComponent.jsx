@@ -12,18 +12,18 @@ const videos = [
     { id: 6, title: 'Review and Summary', duration: '16:40' },
 ]
 
-const TutorialVideosComponent = ({ subject }) => {
+const TutorialVideosComponent = ({ subjectId }) => {
     const handleWatchVideo = (videoId) => {
         // This is a placeholder function for the video playback logic
         // In a real application, you would implement the actual video playback functionality here
-        console.log(`Playing video ${videoId} for ${subject}`)
+        console.log(`Playing video ${videoId} for ${subjectId}`)
     }
 
     return (
         <div className="space-y-6">
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-2xl font-bold text-[#fe965e]">Tutorial Videos for {subject}</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-[#fe965e]">Tutorial Videos for {subjectId}</CardTitle>
                     <CardDescription>Enhance your learning with our video lessons and explanations</CardDescription>
                 </CardHeader>
             </Card>

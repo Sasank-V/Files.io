@@ -20,13 +20,13 @@ const materials = [
     { name: 'Video Lecture', icon: Video },
 ]
 
-const TheoryComponent = ({ subject }) => {
+const TheoryComponent = ({ subjectId }) => {
     const [activeUnit, setActiveUnit] = useState(units[0])
 
     const handleDownload = (unit, material) => {
         // This is a placeholder function for the download logic
         // In a real application, you would implement the actual download functionality here
-        console.log(`Downloading ${material} for ${unit} of ${subject}`)
+        console.log(`Downloading ${material} for ${unit} of ${subjectId}`)
     }
 
     return (

@@ -9,11 +9,11 @@ const assignments = [
     { id: 4, title: 'Final Project', dueDate: '2024-05-01' },
 ]
 
-const AssignmentsComponent = ({ subject }) => {
+const AssignmentsComponent = ({ subjectId }) => {
     const handleDownload = (assignmentId) => {
         // This is a placeholder function for the download logic
         // In a real application, you would implement the actual download functionality here
-        console.log(`Downloading assignment ${assignmentId} for ${subject}`)
+        console.log(`Downloading assignment ${assignmentId} for ${subjectId}`)
     }
 
     return (
@@ -21,7 +21,7 @@ const AssignmentsComponent = ({ subject }) => {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold text-[#fe965e]">Assignments</CardTitle>
-                    <CardDescription>Download assignments related to {subject}</CardDescription>
+                    <CardDescription>Download assignments related to {subjectId}</CardDescription>
                 </CardHeader>
             </Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

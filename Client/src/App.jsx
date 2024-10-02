@@ -31,35 +31,29 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/learn" element={<LearnPage />} />
-        <Route path="/subject" element={<Subject />}>
-          {
-            !auth?.isAdmin ?
-              <>
-                <Route index element={<Navigate to="/subject/0" />} />
-                <Route path=":id" element={<DynamicSubjectComponent />}></Route>
-              </>
-              :
-              <>
-                <Route index element={<Navigate to="/upload/0" />} />
-                <Route path=":id" element={<Navigate to="/upload/0" />}></Route>
-              </>
-          }
-        </Route>
+        {
+          !auth?.isAdmin &&
+          <Route element={<Subject />}>
+            <Route path="/subject/:id" element={<DynamicSubjectComponent />}>
+            </Route>
+          </Route>
+        }
 
         <Route element={<PersistentLogin />}>
           <Route element={<RequireAuth />}>
             <Route path="/queries" element={auth?.isAdmin ? <QueriesAdminPage /> : <QueriesPage />} />
             {
-              auth.isAdmin &&
+              auth.isAdmin === true &&
               <Route path="/upload" element={<Subject isUpload={true} />} >
                 <Route index element={<Navigate to="/upload/0" />} />
                 <Route path=":id" element={<DynamicUploadPage />} />
               </Route>
             }
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
-        <Route path="*" element={<NotFound />} />
-      </Route >
+
+      </Route>
     )
   )
 

@@ -10,11 +10,12 @@ import Material from "../../models/materials.js";
 
 //Create a Subject
 //Format 
-//{admin : "user_id" , name : "" , code : ""}
+//{ name : "" , code : ""}
 router.post("/subject/new",async (req,res)=>{
 try{
+    let userId = req.body.id;
     let data = req.body.data;
-    let user = await User.findById(data.admin);
+    let user = await User.findById(userId);
     if(!user.isAdmin){
         return res.status(401).send({
             success: false,
@@ -49,7 +50,7 @@ try{
 //Upload Syllabus
 //Format
 //{ url : ""}
-router.post("/:subId/syll", async (req,res)=>{
+router.post("/syll/:subId", async (req,res)=>{
 try{
     let userId = req.body.id;
     let subId = req.params.subId;
@@ -91,7 +92,7 @@ try{
 //Upload LessonPlan
 //Format
 //{ url : ""}
-router.post("/:subId/lp", async (req,res)=>{
+router.post("/lp/:subId", async (req,res)=>{
 try{
     let userId = req.body.id;
     let subId = req.params.subId;
@@ -128,7 +129,7 @@ try{
 //Family : 0 - Theory , 1 - Lab , 2 - Assignments
 //Format 
 // { family : "" ,unitNo : "" , title : "" , desc : "" , files : [{name : "" , url : ""}]}
-router.post("/:subId/theory", async (req, res) => {
+router.post("/theory/:subId", async (req, res) => {
 try {
     const { subId } = req.params;
     const { id: userId, data } = req.body;
@@ -208,7 +209,7 @@ try {
 //Upload Model Qps
 //Format
 //{ files : [{name : "",url : ""}]}
-router.post("/:subId/modelQP" , async (req,res)=>{
+router.post("/modelQP/:subId" , async (req,res)=>{
 try {
     const { subId } = req.params;
     const { id: userId, data } = req.body;
@@ -268,7 +269,7 @@ try {
 //Upload Refernce Links
 //Format
 // {ref : ["",""]}
-router.post("/:subId/refs", async (req,res)=>{
+router.post("/refs/:subId", async (req,res)=>{
     try{
 
         const { subId } = req.params;

@@ -273,7 +273,6 @@ router.delete("/delete/:queryId",async (req,res)=>{
     }
 });
 
-
 router.get("*", (req, res) => {
     res.status(404).send("Oops , Route Not Found");
 });

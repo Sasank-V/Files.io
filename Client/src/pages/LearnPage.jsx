@@ -1,37 +1,34 @@
+import axios from "@/api/axios";
 import CustomCard from "@/components/ui/CustomCard"
-import { useEffect } from "react"
+import useAuth from "@/hooks/useAuth";
+import { useEffect, useState } from "react"
 
 const LearnPage = () => {
+    const { auth } = useAuth();
+    const [subjects, setSubjects] = useState([]);
+
     useEffect(() => {
+        const fetchSubjects = async () => {
+            const res = await axios.get("/learn/all");
 
-        const fetchCookie = async () => {
-            const res = await fetch(`${import.meta.env.VITE_REACT_API_URL}/user/query`, {
-                "method": "GET",
-            });
-
-            if (res.ok) {
-                console.log("first")
-            } else {
-                console.log("sec")
-            }
+            const data = res.data;
+            console.log(data)
+            setSubjects(data);
         }
 
-        fetchCookie();
+        fetchSubjects();
 
-    }, [])
+    }, [auth])
 
 
     return (
         <div className="p-5 h-full w-full overflow-y-scroll">
             <div className='p-5 w-full h-full grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-y-[50px]'>
-                <CustomCard />
-                <CustomCard />
-                <CustomCard />
-                <CustomCard />
-                <CustomCard />
-                <CustomCard />
-                <CustomCard />
-                <CustomCard />
+                {
+                    subjects.map((subject) => (
+                        <CustomCard key={subject.id} subjectData={subject} />
+                    ))
+                }
             </div>
         </div>
     )

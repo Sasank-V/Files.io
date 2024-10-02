@@ -11,13 +11,13 @@ const modelQPs = [
     { id: 6, year: 2021, term: 'Final' },
 ]
 
-const ModelQPComponent = ({ subject }) => {
+const ModelQPComponent = ({ subjectId }) => {
     const handleDownload = (year, term) => {
         // This is a placeholder function for the download logic
         // In a real application, you would implement the actual download functionality here
-        console.log(`Downloading ${year} ${term} model question paper for ${subject}`)
+        console.log(`Downloading ${year} ${term} model question paper for ${subjectId}`)
         // For example, you might use:
-        // window.open(`/path/to/${subject}_${year}_${term}_model_qp.pdf`, '_blank')
+        // window.open(`/path/to/${subjectId}_${year}_${term}_model_qp.pdf`, '_blank')
     }
 
     return (
@@ -25,7 +25,7 @@ const ModelQPComponent = ({ subject }) => {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold text-[#fe965e]">Model Question Papers</CardTitle>
-                    <CardDescription>View and download model question papers for {subject}</CardDescription>
+                    <CardDescription>View and download model question papers for {subjectId}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

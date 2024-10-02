@@ -13,18 +13,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export function Subject({ subject = 'Mathematics', isUpload = false }) {
+export function Subject({ isUpload = false }) {
+  const location = useLocation();
+  const subjectId = new URLSearchParams(location.search).get("id");
+
+  console.log(subjectId)
+
+  const queryParams = new URLSearchParams({
+    id: subjectId,
+  }).toString();
+
   const navItems = [
-    { path: !isUpload ? '/subject/0' : '/upload/0', label: 'Syllabus' },
-    { path: !isUpload ? '/subject/1' : '/upload/1', label: 'Lesson Plan' },
-    { path: !isUpload ? '/subject/2' : '/upload/2', label: 'Theory' },
-    { path: !isUpload ? '/subject/3' : '/upload/3', label: 'Labs' },
-    { path: !isUpload ? '/subject/4' : '/upload/4', label: 'Assignments' },
-    { path: !isUpload ? '/subject/5' : '/upload/5', label: 'Model QP' },
-    { path: !isUpload ? '/subject/6' : '/upload/6', label: 'Tutorial Video' },
+    { path: !isUpload ? `/subject/0?${queryParams}` : `/upload/0?${queryParams}`, label: 'Syllabus' },
+    { path: !isUpload ? `/subject/1?${queryParams}` : `/upload/1?${queryParams}`, label: 'Lesson Plan' },
+    { path: !isUpload ? `/subject/2?${queryParams}` : `/upload/2?${queryParams}`, label: 'Theory' },
+    { path: !isUpload ? `/subject/3?${queryParams}` : `/upload/3?${queryParams}`, label: 'Labs' },
+    { path: !isUpload ? `/subject/4?${queryParams}` : `/upload/4?${queryParams}`, label: 'Assignments' },
+    { path: !isUpload ? `/subject/5?${queryParams}` : `/upload/5?${queryParams}`, label: 'Model QP' },
+    { path: !isUpload ? `/subject/6?${queryParams}` : `/upload/6?${queryParams}`, label: 'Tutorial Video' },
   ];
 
-  const location = useLocation();
   const [activeTab, setActiveTab] = useState(() => {
     const currentItem = navItems.find(item => item.path === location.pathname);
     return currentItem ? currentItem.label : navItems[0].label;
@@ -32,7 +40,7 @@ export function Subject({ subject = 'Mathematics', isUpload = false }) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-[#fe965e]">{subject}</h1>
+      <h1 className="text-4xl font-bold mb-8 text-[#fe965e]">{subjectId}</h1>
       <Tabs defaultValue="syllabus">
         <div className="md:hidden mb-4">
           <DropdownMenu>

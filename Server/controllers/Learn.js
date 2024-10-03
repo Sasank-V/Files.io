@@ -4,6 +4,8 @@ const router = express.Router();
 import Subject from "../models/subjects.js";
 import Module from "../models/modules.js";
 
+//Route - /api/learn
+
 //Get all the subject card details
 router.get("/all",async (req,res)=>{
     try{

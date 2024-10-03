@@ -8,6 +8,8 @@ import User from "../../models/users.js";
 import Module from "../../models/modules.js";
 import Material from "../../models/materials.js";
 
+//Route - /api/admin/edit
+
 //Edit a Subject
 //Format 
 //{ name : "" , code : ""}

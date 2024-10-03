@@ -6,6 +6,8 @@ import { querySchema } from "../Schema.js";
 import { compare, compareSync, hash } from "bcrypt";
 import Query from "../models/queries.js";
 
+//Route - /api/query
+
 
 router.get("/me", async (req, res) => {
     const cookies = req.cookies;

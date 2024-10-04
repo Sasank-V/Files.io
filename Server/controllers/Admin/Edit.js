@@ -2,7 +2,7 @@ import express, { urlencoded } from "express";
 const router = express.Router();
 
 import Subject from "../../models/subjects.js";
-import { moduleValidationSchema,subjectSchema } from "../../Schema.js";
+import { moduleValidationSchema, subjectSchema } from "../../Schema.js";
 
 import User from "../../models/users.js";
 import Module from "../../models/modules.js";
@@ -11,25 +11,25 @@ import Material from "../../models/materials.js";
 //Edit a Subject
 //Format 
 //{ name : "" , code : ""}
-router.put("/subject/:subId",async (req,res)=>{
-    try{
-        let {subId} = req.params;
+router.put("/subject/:subId", async (req, res) => {
+    try {
+        let { subId } = req.params;
         let userId = req.body.id;
         const subject = await Subject.findById(subId);
-        if(!subject){
+        if (!subject) {
             return res.status(404).send({
-                success : false,
-                message : "Subject not found"
+                success: false,
+                message: "Subject not found"
             });
         }
-        if(userId != subject.admin){
+        if (userId != subject.admin) {
             return res.status(400).send({
                 success: false,
                 message: "Unauthorised Access , You are not the admin of this subject",
             });
         }
         const data = req.body.data;
-        const {name,code} = data;
+        const { name, code } = data;
         subject.name = name;
         subject.code = code;
         await subject.save();
@@ -37,42 +37,42 @@ router.put("/subject/:subId",async (req,res)=>{
             success: true,
             message: "Subject Updated Successfully",
         });
-}catch(err){
-    console.error(err);
-    return res.status(500).send({
-        success: false,
-        message: "An error occurred while Updating Subject",
-    });
-}
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({
+            success: false,
+            message: "An error occurred while Updating Subject",
+        });
+    }
 });
 
 
 //Edit Syllabus
 //Format
-//{ url : ""}
-router.put("/syll/:subId", async (req,res)=>{
-    try{
+//{ url : "" }
+router.put("/syll/:subId", async (req, res) => {
+    try {
         let userId = req.body.id;
         let subId = req.params.subId;
         const subject = await Subject.findById(subId);
-        if(subject.admin != userId){
+        if (subject.admin != userId) {
             return res.status(401).send({
                 success: false,
                 message: "Unauthorised Request",
             });
         }
         let syllUrl = req.body.data.url;
-        if(!syllUrl){
+        if (!syllUrl) {
             return res.status(402).send({
                 success: false,
                 message: "Url is Empty",
             });
         }
         let syllId = subject.syllabus;
-        if(!syllId){
+        if (!syllId) {
             return res.status(404).send({
-                success : false,
-                message : "No Syllabus found , Try Adding it",
+                success: false,
+                message: "No Syllabus found , Try Adding it",
             })
         }
         const syllabus = await Material.findById(syllId);
@@ -82,7 +82,7 @@ router.put("/syll/:subId", async (req,res)=>{
             success: true,
             message: "Syllabus Updated Successfully",
         });
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return res.status(500).send({
             success: false,
@@ -94,12 +94,12 @@ router.put("/syll/:subId", async (req,res)=>{
 //Edit LessonPlan
 //Format
 //{ url : ""}
-router.put("/lp/:subId", async (req,res)=>{
-    try{
+router.put("/lp/:subId", async (req, res) => {
+    try {
         let userId = req.body.id;
         let subId = req.params.subId;
         const subject = await Subject.findById(subId);
-        if(subject.admin != userId){
+        if (subject.admin != userId) {
             return res.status(401).send({
                 success: false,
                 message: "Unauthorised Request",
@@ -107,10 +107,10 @@ router.put("/lp/:subId", async (req,res)=>{
         }
         let lpUrl = req.body.data.url;
         let lpId = subject.lessonPlan;
-        if(!lpId){
+        if (!lpId) {
             return res.status(404).send({
-                success : false,
-                message : "Lesson Plan Not Found, Try Creating one :)"
+                success: false,
+                message: "Lesson Plan Not Found, Try Creating one :)"
             })
         }
         const lessonPlan = await Material.findById(lpId);
@@ -120,7 +120,7 @@ router.put("/lp/:subId", async (req,res)=>{
             success: true,
             message: "Lesson Plan Successfully Posted",
         });
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return res.status(500).send({
             success: false,

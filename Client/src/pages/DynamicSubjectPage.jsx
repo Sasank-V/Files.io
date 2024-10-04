@@ -1,6 +1,9 @@
+import axios from '@/api/axios';
 import LoadingComponent from '@/components/loading';
-import React, { lazy, Suspense } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import useAuth from '@/hooks/useAuth';
+import useSubjects from '@/hooks/useSubjects';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 // Lazy loading the components for better performance
 const SyllabusComponent = lazy(() => import('@/components/subject/SyllabusComponent'));
@@ -11,23 +14,43 @@ const AssignmentsComponent = lazy(() => import('@/components/subject/Assignments
 const ModelQPComponent = lazy(() => import('@/components/subject/ModelQPComponent'));
 const TutorialVideosComponent = lazy(() => import('@/components/subject/TutorialVideosComponent'));
 
+const SyllabusUploadComponent = lazy(() => import('@/components/uploadPage/SyllabusUploadComponent'));
+const LessonPlanUploadComponent = lazy(() => import('@/components/uploadPage/LessonPlanUploadComponent'));
+const TheoryUploadComponent = lazy(() => import('@/components/uploadPage/TheoryUploadComponent'));
+// const LabsComponent = lazy(() => import('@/components/subject/LabsComponent'));
+// const AssignmentsComponent = lazy(() => import('@/components/subject/AssignmentsComponent'));
+// const ModelQPComponent = lazy(() => import('@/components/subject/ModelQPComponent'));
+// const TutorialVideosComponent = lazy(() => import('@/components/subject/TutorialVideosComponent'));
+
 // Mapping type to corresponding component
-const componentMap = {
-    0: SyllabusComponent,
-    1: LessonPlan,
-    2: TheoryComponent,
-    3: LabsComponent,
-    4: AssignmentsComponent,
-    5: ModelQPComponent,
-    6: TutorialVideosComponent,
-};
 
 const DynamicSubjectComponent = () => {
+    const { auth } = useAuth();
+
+    const componentMap = {
+        0: !auth.isAdmin ? SyllabusComponent : SyllabusUploadComponent,
+        1: !auth.isAdmin ? LessonPlan : LessonPlanUploadComponent,
+        2: !auth.isAdmin ? TheoryComponent : TheoryUploadComponent,
+        3: !auth.isAdmin ? LabsComponent : LabsComponent,
+        4: !auth.isAdmin ? AssignmentsComponent : AssignmentsComponent,
+        5: !auth.isAdmin ? ModelQPComponent : ModelQPComponent,
+        6: !auth.isAdmin ? TutorialVideosComponent : TutorialVideosComponent,
+    };
+
     const { id } = useParams();
     const SubjectComponent = componentMap[id];
 
     const subjectId = new URLSearchParams(location.search).get("id");
 
+    // useEffect(() => {
+    //     const fetchSubjectDetails = async () => {
+    //         const subject = subjects.find((sub) => sub.id === subjectId);
+
+    //         setCurrentSubject(subject);
+    //     }
+
+    //     fetchSubjectDetails();
+    // }, [])
 
     if (!SubjectComponent) {
         return <div>Invalid subject type!</div>;

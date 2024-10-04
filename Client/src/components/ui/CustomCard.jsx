@@ -12,7 +12,7 @@ const CustomCard = ({ subjectData }) => {
     return (
         <div className='w-full h-full flex justify-center'>
             <Link
-                to={auth?.isAdmin ? `/upload/0?id=${queryParams}` : `/subject/0?${queryParams}`}
+                to={`/subject/0?${queryParams}`}
                 className="h-[300px] w-[300px] rounded-3xl overflow-hidden shadow-xl cursor-pointer active:size-[305px] hover:opacity-85 transition-all duration-150"
             >
                 <div className='h-3/4'>

@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Download, FileText, Video, Presentation } from 'lucide-react'
+import axios from '@/api/axios'
+
 
 const units = [
     'Module 1',
@@ -21,12 +23,24 @@ const materials = [
 ]
 
 const TheoryComponent = ({ subjectId }) => {
+    const [subject, setSubject] = useState({});
+
+    useEffect(() => {
+        const fetchSubjectDetails = async () => {
+            const res = await axios.get(`/learn/${subjectId}`);
+            const data = res.data;
+
+            setSubject(data.data);
+        }
+
+        fetchSubjectDetails();
+    }, [])
+
+
     const [activeUnit, setActiveUnit] = useState(units[0])
 
     const handleDownload = (unit, material) => {
-        // This is a placeholder function for the download logic
-        // In a real application, you would implement the actual download functionality here
-        console.log(`Downloading ${material} for ${unit} of ${subjectId}`)
+        console.log(`Downloading ${material} for ${unit} of ${subject.name}`)
     }
 
     return (

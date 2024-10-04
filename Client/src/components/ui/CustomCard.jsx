@@ -67,6 +67,8 @@ const CustomCard = ({ subjectData }) => {
                 to={auth?.isAdmin ? `/upload/0?id=${queryParams}` : `/subject/0?${queryParams}`}
                 className="relative h-[350px] w-[300px] rounded-2xl overflow-hidden shadow-lg cursor-pointer bg-white group"
                 onPointerEnter={()=>setOnCard(true)}
+                to={`/subject/0?${queryParams}`}
+                className="h-[300px] w-[300px] rounded-3xl overflow-hidden shadow-xl cursor-pointer active:size-[305px] hover:opacity-85 transition-all duration-150"
             >
                 <div className='h-full overflow-hidden'>
                     <img 

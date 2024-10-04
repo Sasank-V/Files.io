@@ -1,14 +1,25 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import axios from '@/api/axios'
 
 const LessonPlan = ({ subjectId }) => {
+    const [subject, setSubject] = useState({});
+
+    useEffect(() => {
+        const fetchSubjectDetails = async () => {
+            const res = await axios.get(`/learn/${subjectId}`);
+            const data = res.data;
+
+            setSubject(data.data);
+        }
+
+        fetchSubjectDetails();
+    }, [])
+
     const handleDownload = () => {
-        // This is a placeholder function for the download logic
-        // In a real application, you would implement the actual download functionality here
-        console.log(`Downloading ${subjectId} lesson plan PDF`)
-        // For example, you might use:
-        // window.open('/path/to/lesson-plan.pdf', '_blank')
+        console.log(`Downloading ${subject.name} lesson plan PDF`)
     }
 
     return (
@@ -17,7 +28,7 @@ const LessonPlan = ({ subjectId }) => {
                 <div className="flex justify-between items-center">
                     <div>
                         <CardTitle className="text-2xl font-bold text-[#fe965e]">Lesson Plan</CardTitle>
-                        <CardDescription className="mt-1">Download the weekly lesson plan for {subjectId}</CardDescription>
+                        <CardDescription className="mt-1">Download the weekly lesson plan for {subject.name}</CardDescription>
                     </div>
                 </div>
             </CardHeader>

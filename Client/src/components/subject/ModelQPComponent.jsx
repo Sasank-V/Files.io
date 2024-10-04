@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import axios from '@/api/axios'
 
 const modelQPs = [
     { id: 1, year: 2023, term: 'Midterm' },
@@ -12,12 +14,21 @@ const modelQPs = [
 ]
 
 const ModelQPComponent = ({ subjectId }) => {
+    const [subject, setSubject] = useState({});
+
+    useEffect(() => {
+        const fetchSubjectDetails = async () => {
+            const res = await axios.get(`/learn/${subjectId}`);
+            const data = res.data;
+
+            setSubject(data.data);
+        }
+
+        fetchSubjectDetails();
+    }, [])
+
     const handleDownload = (year, term) => {
-        // This is a placeholder function for the download logic
-        // In a real application, you would implement the actual download functionality here
-        console.log(`Downloading ${year} ${term} model question paper for ${subjectId}`)
-        // For example, you might use:
-        // window.open(`/path/to/${subjectId}_${year}_${term}_model_qp.pdf`, '_blank')
+        console.log(`Downloading ${year} ${term} model question paper for ${subject.name}`)
     }
 
     return (
@@ -25,7 +36,7 @@ const ModelQPComponent = ({ subjectId }) => {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold text-[#fe965e]">Model Question Papers</CardTitle>
-                    <CardDescription>View and download model question papers for {subjectId}</CardDescription>
+                    <CardDescription>View and download model question papers for {subject.name}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

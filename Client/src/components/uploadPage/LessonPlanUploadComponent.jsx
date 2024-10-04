@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Download, Upload, FileText } from 'lucide-react'
 
-const LessonPlanUploadComponent = ({ subject }) => {
+const LessonPlanUploadComponent = ({ subjectId }) => {
     const [file, setFile] = useState(null)
     const currentLessonPlan = null;
 
@@ -17,7 +17,7 @@ const LessonPlanUploadComponent = ({ subject }) => {
 
     const handleUpload = () => {
         if (file) {
-            console.log(`Uploading ${file.name} for ${subject}`)
+            console.log(`Uploading ${file.name} for ${subjectId}`)
             // Implement actual upload logic here
         } else {
             console.log('No file selected')
@@ -25,7 +25,7 @@ const LessonPlanUploadComponent = ({ subject }) => {
     }
 
     const handleDownload = () => {
-        console.log(`Downloading ${subject} syllabus PDF`)
+        console.log(`Downloading ${subjectId} syllabus PDF`)
         // Implement actual download logic here
     }
 
@@ -37,7 +37,7 @@ const LessonPlanUploadComponent = ({ subject }) => {
                     <div className="flex justify-between items-center">
                         <div>
                             <CardTitle className="text-2xl font-bold text-[#fe965e]">Current Lesson Plan</CardTitle>
-                            <CardDescription className="mt-1">View or download the current lesson plan for {subject}</CardDescription>
+                            <CardDescription className="mt-1">View or download the current lesson plan for {subjectId}</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
@@ -62,7 +62,7 @@ const LessonPlanUploadComponent = ({ subject }) => {
                     <div className="flex justify-between items-center">
                         <div>
                             <CardTitle className="text-2xl font-bold text-[#fe965e]">Upload New Lesson Plan</CardTitle>
-                            <CardDescription className="mt-1">Upload a new Lesson Plan PDF for {subject}</CardDescription>
+                            <CardDescription className="mt-1">Upload a new Lesson Plan PDF for {subjectId}</CardDescription>
                         </div>
                     </div>
                 </CardHeader>

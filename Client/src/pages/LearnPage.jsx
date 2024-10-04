@@ -1,13 +1,18 @@
 import axios from "@/api/axios";
 import CustomCard from "@/components/ui/CustomCard"
 import useAuth from "@/hooks/useAuth";
+
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { useDebugValue, useEffect, useState } from "react"
 
+import useSubjects from "@/hooks/useSubjects";
+import { useEffect, useState } from "react"
+
+
 const LearnPage = () => {
     const { auth } = useAuth();
-    const [subjects, setSubjects] = useState([]);
+    const { subjects, setSubjects } = useSubjects();
 
     useEffect(() => {
         const fetchSubjects = async () => {
@@ -19,7 +24,6 @@ const LearnPage = () => {
         }
 
         fetchSubjects();
-
     }, []);
 
     

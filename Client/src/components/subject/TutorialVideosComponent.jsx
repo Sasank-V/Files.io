@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Video, Play } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import axios from '@/api/axios'
 
 const videos = [
     { id: 1, title: 'Introduction to the Course', duration: '15:30' },
@@ -13,17 +14,28 @@ const videos = [
 ]
 
 const TutorialVideosComponent = ({ subjectId }) => {
+    const [subject, setSubject] = useState({});
+
+    useEffect(() => {
+        const fetchSubjectDetails = async () => {
+            const res = await axios.get(`/learn/${subjectId}`);
+            const data = res.data;
+
+            setSubject(data.data);
+        }
+
+        fetchSubjectDetails();
+    }, [])
+
     const handleWatchVideo = (videoId) => {
-        // This is a placeholder function for the video playback logic
-        // In a real application, you would implement the actual video playback functionality here
-        console.log(`Playing video ${videoId} for ${subjectId}`)
+        console.log(`Playing video ${videoId} for ${subject.name}`)
     }
 
     return (
         <div className="space-y-6">
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-2xl font-bold text-[#fe965e]">Tutorial Videos for {subjectId}</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-[#fe965e]">Tutorial Videos for {subject.name}</CardTitle>
                     <CardDescription>Enhance your learning with our video lessons and explanations</CardDescription>
                 </CardHeader>
             </Card>

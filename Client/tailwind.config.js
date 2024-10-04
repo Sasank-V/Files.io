@@ -7,6 +7,10 @@ export default {
   ],
   theme: {
   	extend: {
+		fontFamily: {
+			vsregular: ['VS Regular', 'sans-serif'],
+			vssemibold : ['VS SemiBold' , 'sans-serif'] // Register the 'VS Regular' font
+		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

@@ -64,3 +64,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer base {
+  @font-face {
+    font-family: 'VS Regular';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(./assets/Fonts/Visual-Sans-Regular.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'VS SemiBold';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(./assets/Fonts/Visual-Sans-SemiBold.woff2) format('woff2');
+  }
+}

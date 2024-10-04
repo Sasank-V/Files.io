@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Download, Calendar } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import axios from '@/api/axios'
 
 const assignments = [
     { id: 1, title: 'Assignment 1: Fundamentals', dueDate: '2024-03-15' },
@@ -10,10 +12,23 @@ const assignments = [
 ]
 
 const AssignmentsComponent = ({ subjectId }) => {
+    const [subject, setSubject] = useState({});
+
+    useEffect(() => {
+        const fetchSubjectDetails = async () => {
+            const res = await axios.get(`/learn/${subjectId}`);
+            const data = res.data;
+
+            setSubject(data.data);
+        }
+
+        fetchSubjectDetails();
+    }, [])
+
     const handleDownload = (assignmentId) => {
         // This is a placeholder function for the download logic
         // In a real application, you would implement the actual download functionality here
-        console.log(`Downloading assignment ${assignmentId} for ${subjectId}`)
+        console.log(`Downloading assignment ${assignmentId} for ${subject.name}`)
     }
 
     return (
@@ -21,7 +36,7 @@ const AssignmentsComponent = ({ subjectId }) => {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold text-[#fe965e]">Assignments</CardTitle>
-                    <CardDescription>Download assignments related to {subjectId}</CardDescription>
+                    <CardDescription>Download assignments related to {subject.name}</CardDescription>
                 </CardHeader>
             </Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

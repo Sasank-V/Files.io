@@ -23,13 +23,13 @@ const materials = [
     { name: 'Video Lecture', icon: Video },
 ]
 
-const TheoryUploadComponent = ({ subject }) => {
+const TheoryUploadComponent = ({ subjectId }) => {
     const [activeUnit, setActiveUnit] = useState(units[0])
     const [selectedUnit, setSelectedUnit] = useState('')
     const [selectedFiles, setSelectedFiles] = useState([])
 
     const handleDownload = (unit, material) => {
-        console.log(`Downloading ${material} for ${unit} of ${subject}`)
+        console.log(`Downloading ${material} for ${unit} of ${subjectId}`)
     }
 
     const handleFileChange = (e) => {
@@ -39,7 +39,7 @@ const TheoryUploadComponent = ({ subject }) => {
     const handleUpload = (e) => {
         e.preventDefault()
         if (selectedUnit && selectedFiles.length > 0) {
-            console.log(`Uploading ${selectedFiles.length} file(s) to ${selectedUnit} for ${subject}`)
+            console.log(`Uploading ${selectedFiles.length} file(s) to ${selectedUnit} for ${subjectId}`)
             // Implement actual upload logic here
         } else {
             console.log('Please select a unit and at least one file')

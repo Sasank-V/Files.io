@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useState, useEffect } from 'react';
+import { Tabs } from '@/components/ui/tabs'
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
@@ -12,25 +11,38 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import useSubjects from '@/hooks/useSubjects';
+import axios from '@/api/axios';
 
-export function Subject({ isUpload = false }) {
+export function Subject() {
   const location = useLocation();
-  const subjectId = new URLSearchParams(location.search).get("id");
+  const [subject, setSubject] = useState({});
 
-  console.log(subjectId)
+  const subjectId = new URLSearchParams(location.search).get("id");
 
   const queryParams = new URLSearchParams({
     id: subjectId,
   }).toString();
 
+  useEffect(() => {
+    const fetchSubjectDetails = async () => {
+      const res = await axios.get(`/learn/${subjectId}`);
+
+      setSubject(res.data.data);
+    }
+
+    fetchSubjectDetails();
+  }, []);
+
+
   const navItems = [
-    { path: !isUpload ? `/subject/0?${queryParams}` : `/upload/0?${queryParams}`, label: 'Syllabus' },
-    { path: !isUpload ? `/subject/1?${queryParams}` : `/upload/1?${queryParams}`, label: 'Lesson Plan' },
-    { path: !isUpload ? `/subject/2?${queryParams}` : `/upload/2?${queryParams}`, label: 'Theory' },
-    { path: !isUpload ? `/subject/3?${queryParams}` : `/upload/3?${queryParams}`, label: 'Labs' },
-    { path: !isUpload ? `/subject/4?${queryParams}` : `/upload/4?${queryParams}`, label: 'Assignments' },
-    { path: !isUpload ? `/subject/5?${queryParams}` : `/upload/5?${queryParams}`, label: 'Model QP' },
-    { path: !isUpload ? `/subject/6?${queryParams}` : `/upload/6?${queryParams}`, label: 'Tutorial Video' },
+    { path: `/subject/0?${queryParams}`, label: 'Syllabus' },
+    { path: `/subject/1?${queryParams}`, label: 'Lesson Plan' },
+    { path: `/subject/2?${queryParams}`, label: 'Theory' },
+    { path: `/subject/3?${queryParams}`, label: 'Labs' },
+    { path: `/subject/4?${queryParams}`, label: 'Assignments' },
+    { path: `/subject/5?${queryParams}`, label: 'Model QP' },
+    { path: `/subject/6?${queryParams}`, label: 'Tutorial Video' },
   ];
 
   const [activeTab, setActiveTab] = useState(() => {
@@ -40,7 +52,7 @@ export function Subject({ isUpload = false }) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-[#fe965e]">{subjectId}</h1>
+      <h1 className="text-4xl font-bold mb-8 text-[#fe965e]">{subject.name}</h1>
       <Tabs defaultValue="syllabus">
         <div className="md:hidden mb-4">
           <DropdownMenu>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -6,8 +6,22 @@ import { Label } from '@/components/ui/label'
 import { Download, Upload, FileText } from 'lucide-react'
 import { storage } from '@/../firebase'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import axios from '@/api/axios'
 
-const SyllabusUploadComponent = ({ subject, currentSyllabus }) => {
+const SyllabusUploadComponent = ({ subjectId, currentSyllabus }) => {
+    const [subject, setSubject] = useState({});
+
+    useEffect(() => {
+        const fetchSubjectDetails = async () => {
+            const res = await axios.get(`/learn/${subjectId}`);
+            const data = res.data;
+
+            setSubject(data.data);
+        }
+
+        fetchSubjectDetails();
+    }, [])
+
     const [file, setFile] = useState(null)
 
     const handleFileChange = (e) => {
@@ -21,7 +35,7 @@ const SyllabusUploadComponent = ({ subject, currentSyllabus }) => {
         if (!file) return
 
         const f = file[0];
-        const storageRef = ref(storage, `images/${f.name}`);
+        const storageRef = ref(storage, `/${subjectId}/syllabus/${f.name}`);
 
         try {
             const snapshot = await uploadBytes(storageRef, f);
@@ -37,8 +51,7 @@ const SyllabusUploadComponent = ({ subject, currentSyllabus }) => {
     }
 
     const handleDownload = () => {
-        console.log(`Downloading ${subject} syllabus PDF`)
-        // Implement actual download logic here
+        console.log(`Downloading ${subject.name} syllabus PDF`)
     }
 
     return (
@@ -49,7 +62,7 @@ const SyllabusUploadComponent = ({ subject, currentSyllabus }) => {
                     <div className="flex justify-between items-center">
                         <div>
                             <CardTitle className="text-2xl font-bold text-[#fe965e]">Current Syllabus</CardTitle>
-                            <CardDescription className="mt-1">View or download the current syllabus for {subject}</CardDescription>
+                            <CardDescription className="mt-1">View or download the current syllabus for {subject.name}</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
@@ -74,7 +87,7 @@ const SyllabusUploadComponent = ({ subject, currentSyllabus }) => {
                     <div className="flex justify-between items-center">
                         <div>
                             <CardTitle className="text-2xl font-bold text-[#fe965e]">Upload New Syllabus</CardTitle>
-                            <CardDescription className="mt-1">Upload a new syllabus PDF for {subject}</CardDescription>
+                            <CardDescription className="mt-1">Upload a new syllabus PDF for {subject.name}</CardDescription>
                         </div>
                     </div>
                 </CardHeader>

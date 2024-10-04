@@ -1,24 +1,25 @@
 import axios from "@/api/axios";
 import CustomCard from "@/components/ui/CustomCard"
 import useAuth from "@/hooks/useAuth";
+import useSubjects from "@/hooks/useSubjects";
 import { useEffect, useState } from "react"
 
 const LearnPage = () => {
     const { auth } = useAuth();
-    const [subjects, setSubjects] = useState([]);
+    const { subjects, setSubjects } = useSubjects();
 
     useEffect(() => {
         const fetchSubjects = async () => {
             const res = await axios.get("/learn/all");
 
-            const data = res.data;
+            const data = res.data.data;
             console.log(data)
             setSubjects(data);
         }
 
         fetchSubjects();
 
-    }, [auth])
+    }, [])
 
 
     return (

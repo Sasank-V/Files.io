@@ -1,7 +1,6 @@
 'use client'
-
 import { Link, Outlet, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Search, Menu } from 'lucide-react'
 import { ToastContainer } from 'react-toastify'
@@ -21,16 +20,16 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <div className="flex flex-col w-[100vw] h-max bg-[rgb(252,239,231)] min-h-screen">
+    <div className="flex flex-col w-[100vw] h-max bg-[rgb(252,239,231)] min-h-screen font-vssemibold">
       <header
         className="sticky top-0 z-50 w-[100vw] border-b bg-inherit"
       >
-        <div className="p-4 px-10 flex h-14 items-center justify-between w-full">
+        <div className="p-4 px-10 flex h-14 items-center justify-between w-full border-b-2 border-black">
           <div className="mr-4 hidden md:flex">
             <Link className="mr-6 flex items-center space-x-2" to="/">
-              <span className="hidden font-bold sm:inline-block">EduShare</span>
+              <span className="hidden font-bold sm:inline-block ">Files.io</span>
             </Link>
-            <nav className="flex ml-10 items-center space-x-6 text-md font-medium">
+            <nav id="#navs" className="flex ml-10 items-center space-x-6 text-md font-medium ">
               <Link to="/">Home</Link>
               <Link to="/learn">Learn</Link>
               <Link to="/queries">Queries</Link>

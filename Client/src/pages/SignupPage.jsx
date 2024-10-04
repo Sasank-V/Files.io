@@ -1,111 +1,74 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { toast } from 'react-toastify';
+import { toast } from 'react-toastify'
 import axios from 'axios'
-
+import gsap from 'gsap'
 
 const SignupPage = () => {
     const navigate = useNavigate();
 
-    const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const [errors, setErrors] = useState({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-    })
-    const [isFormValid, setIsFormValid] = useState(false)
 
-    const validateName = (value) => {
-        if (value.trim().length < 2) {
-            return 'Name must be at least 2 characters long'
-        }
-        return ''
-    }
-
-    const validateEmail = (value) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(value)) {
-            return 'Please enter a valid email address'
-        }
-        return ''
-    }
-
-    const validatePassword = (value) => {
-        if (value.length < 8) {
-            return 'Password must be at least 8 characters long'
-        }
-        return ''
-    }
-
-    const validateConfirmPassword = (value) => {
-        if (value !== password) {
-            return 'Passwords do not match'
-        }
-        return ''
-    }
+    const svgRef = useRef(null);
 
     useEffect(() => {
-        const nameError = validateName(name)
-        const emailError = validateEmail(email)
-        const passwordError = validatePassword(password)
-        const confirmPasswordError = validateConfirmPassword(confirmPassword)
+        const svg = svgRef.current;    
+        gsap.to(svg, {
+            scale: 1,
+            rotation: 0,
+            duration: 1.5,
+            ease: "elastic.out(1, 0.3)",
+        });
 
-        setErrors({
-            name: nameError,
-            email: emailError,
-            password: passwordError,
-            confirmPassword: confirmPasswordError
-        })
+        const floatTimeline = gsap.timeline({ repeat: -1, yoyo: true });
+        floatTimeline.to(svg, {
+            y: -20,
+            duration: 2,
+            ease: "power1.inOut",
+        });
 
-        setIsFormValid(
-            !nameError && !emailError && !passwordError && !confirmPasswordError &&
-            name.trim() !== '' && email.trim() !== '' && password !== '' && confirmPassword !== ''
-        )
-    }, [name, email, password, confirmPassword])
+    }, []);
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        if (isFormValid) {
-            const user = {
-                username: name,
-                password: password,
-                email: email
-            };
+        e.preventDefault();
 
-            const url = `${import.meta.env.VITE_REACT_API_URL}/auth/signup`;
-
-            axios.post(url, user, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then((res) => {
-                    const json = res.data;
-
-                    if (res.status === 200) {
-                        navigate("/login");
-                        toast.success(json.message, { position: 'top-right' });
-                    }
-                })
-                .catch((error) => {
-                    if (error.response && error.response.status === 409) {
-                        toast.error(error.response.data.message, { position: 'top-right' });
-                    } else {
-                        toast.error("Signup failed", { position: 'top-right' });
-                    }
-                });
-
+        if (password !== confirmPassword) {
+            toast.error("Passwords do not match", { position: 'top-right' });
+            return;
         }
+
+        const user = { email, password };
+
+        const url = `${import.meta.env.VITE_REACT_API_URL}/auth/signup`;
+
+        axios.post(url, user, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((res) => {
+            const { message } = res.data;
+
+            console.log(message)
+
+            toast.success(message, { position: 'top-right' });
+
+            navigate('/login');
+        }).catch((error) => {
+            if (error.response && error.response.data) {
+                toast.error(error.response.data.message, { position: 'top-right' });
+            } else {
+                toast.error("Signup failed", { position: 'top-right' });
+            }
+        });
     }
 
     const togglePasswordVisibility = () => {
@@ -129,19 +92,6 @@ const SignupPage = () => {
                     <form onSubmit={handleSubmit} className='w-full max-w-[400px] mt-10'>
                         <div className='space-y-4'>
                             <div className='space-y-2'>
-                                <Label htmlFor="name">Full Name</Label>
-                                <Input
-                                    id="name"
-                                    type="text"
-                                    placeholder="Enter your full name"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    required
-                                    className="w-full bg-white px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#fe965e]"
-                                />
-                                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-                            </div>
-                            <div className='space-y-2'>
                                 <Label htmlFor="email">Email</Label>
                                 <Input
                                     id="email"
@@ -152,7 +102,6 @@ const SignupPage = () => {
                                     required
                                     className="w-full bg-white px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#fe965e]"
                                 />
-                                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                             </div>
                             <div className='space-y-2'>
                                 <Label htmlFor="password">Password</Label>
@@ -179,7 +128,6 @@ const SignupPage = () => {
                                         )}
                                     </button>
                                 </div>
-                                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                             </div>
                             <div className='space-y-2'>
                                 <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -197,7 +145,7 @@ const SignupPage = () => {
                                         type="button"
                                         onClick={toggleConfirmPasswordVisibility}
                                         className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-700"
-                                        aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                                     >
                                         {showConfirmPassword ? (
                                             <EyeOff className="w-5 h-5" />
@@ -206,15 +154,10 @@ const SignupPage = () => {
                                         )}
                                     </button>
                                 </div>
-                                {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
                             </div>
                         </div>
                         <div className='flex justify-center mt-[50px] w-full'>
-                            <Button
-                                type="submit"
-                                className="w-[200px] bg-[#fe965e] rounded-full p-3 text-lg text-white text-center"
-                                disabled={!isFormValid}
-                            >
+                            <Button type="submit" className="w-[200px] bg-[#fe965e] rounded-full p-3 text-lg text-white text-center">
                                 Sign Up
                             </Button>
                         </div>
@@ -229,7 +172,7 @@ const SignupPage = () => {
             </div>
             <div className='md:flex hidden w-[50%] justify-center h-[95vh]'>
                 <div className='w-[60%] h-[90%] rounded-b-full bg-[#f9d9c6] flex items-center justify-center'>
-                    <svg className="w-1/2 h-1/2 text-[#fe965e]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg ref={svgRef} className="w-1/2 h-1/2 text-[#fe965e]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
                 </div>

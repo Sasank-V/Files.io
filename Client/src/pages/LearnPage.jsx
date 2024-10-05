@@ -6,14 +6,13 @@ import { useEffect, useState } from "react"
 
 const LearnPage = () => {
     const { auth } = useAuth();
-    const { subjects, setSubjects } = useSubjects();
+    const [subjects, setSubjects] = useState([]);
 
     useEffect(() => {
         const fetchSubjects = async () => {
             const res = await axios.get("/learn/all");
 
             const data = res.data.data;
-            console.log(data)
             setSubjects(data);
         }
 

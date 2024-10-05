@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 import Subject from "../../models/subjects.js";
-import { moduleValidationSchema,subjectSchema } from "../../Schema.js";
+import { moduleValidationSchema, subjectSchema } from "../../Schema.js";
 
 import User from "../../models/users.js";
 import Module from "../../models/modules.js";
@@ -13,117 +13,119 @@ import Material from "../../models/materials.js";
 //Create a Subject
 //Format 
 //{ name : "" , code : ""}
-router.post("/subject/new",async (req,res)=>{
-try{
-    let userId = req.body.id;
-    let data = req.body.data;
-    let user = await User.findById(userId);
-    if(!user.isAdmin){
-        return res.status(401).send({
+router.post("/subject/new", async (req, res) => {
+    try {
+        let userId = req.body.id;
+        let data = req.body.data;
+        let user = await User.findById(userId);
+        if (!user.isAdmin) {
+            return res.status(401).send({
+                success: false,
+                message: "An unauthorised Access",
+            });
+        }
+        let { err } = subjectSchema.validate(data);
+        if (err) {
+            return res.status(401).send({
+                success: false,
+                message: "Send a Valid Object",
+            });
+        } else {
+            const newSubject = new Subject(data);
+            const savedSub = await newSubject.save();
+            return res.status(200).send({
+                success: true,
+                message: "Subject Created Successfully",
+                subId: savedSub._id,
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({
             success: false,
-            message: "An unauthorised Access",
+            message: "An error occurred while Posting Subject",
         });
     }
-    let {err} = subjectSchema.validate(data);
-    if(err){
-        return res.status(401).send({
-            success: false,
-            message: "Send a Valid Object",
-        });
-    }else{
-        const newSubject = new Subject(data);
-        const savedSub = await newSubject.save();
-        return res.status(200).send({
-            success: true,
-            message: "Subject Created Successfully",
-            subId : savedSub._id,
-        });
-    }
-}catch(err){
-    console.error(err);
-    return res.status(500).send({
-        success: false,
-        message: "An error occurred while Posting Subject",
-    });
-}
 });
 
 
 //Upload Syllabus
 //Format
-//{ url : ""}
-router.post("/syll/:subId", async (req,res)=>{
-try{
-    let userId = req.body.id;
-    let subId = req.params.subId;
-    const subject = await Subject.findById(subId);
-    if(subject.admin != userId){
-        return res.status(401).send({
+//{ url : "" }
+router.post("/syll/:subId", async (req, res) => {
+    try {
+        let userId = req.body.id;
+        let subId = req.params.subId;
+        const subject = await Subject.findById(subId);
+
+        if (subject.admin != userId) {
+            return res.status(401).send({
+                success: false,
+                message: "Unauthorised Request",
+            });
+        }
+        let syllUrl = req.body.data.url;
+        console.log(syllUrl);
+        if (!syllUrl) {
+            return res.status(401).send({
+                success: false,
+                message: "Url is Empty",
+            });
+        }
+        let syllabus = new Material({
+            name: subject.name + "_Syllabus",
+            url: syllUrl,
+        })
+        let savedSyllabus = await syllabus.save();
+        subject.syllabus = savedSyllabus._id;
+        await subject.save();
+        return res.status(200).send({
+            success: true,
+            message: "Syllabus Successfully Posted",
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({
             success: false,
-            message: "Unauthorised Request",
+            message: "Error while posting Syllabus",
         });
     }
-    let syllUrl = req.body.data.url;
-    if(!syllUrl){
-        return res.status(401).send({
-            success: false,
-            message: "Url is Empty",
-        });
-    }
-    let syllabus = new Material({
-        name : subject.name + "_Syllabus",
-        url : syllUrl,
-    })
-    let savedSyllabus = await syllabus.save();
-    subject.syllabus = savedSyllabus._id;
-    await subject.save();
-    return res.status(200).send({
-        success: true,
-        message: "Syllabus Successfully Posted",
-    });
-}catch(err){
-    console.log(err);
-    return res.status(500).send({
-        success: false,
-        message: "Error while posting Syllabus",
-    });
-}
 
 });
 
 //Upload LessonPlan
 //Format
 //{ url : ""}
-router.post("/lp/:subId", async (req,res)=>{
-try{
-    let userId = req.body.id;
-    let subId = req.params.subId;
-    const subject = await Subject.findById(subId);
-    if(subject.admin != userId){
-        return res.status(401).send({
+router.post("/lp/:subId", async (req, res) => {
+    try {
+        let userId = req.body.id;
+        let subId = req.params.subId;
+        const subject = await Subject.findById(subId);
+        if (subject.admin != userId) {
+            return res.status(401).send({
+                success: false,
+                message: "Unauthorised Request",
+            });
+        }
+        let lpUrl = req.body.data.url;
+        let lp = new Material({
+            name: subject.name + "_Lesson Plan",
+            url: lpUrl,
+        })
+        let savedLP = await lp.save();
+        subject.lessonPlan = savedLP._id;
+        await subject.save();
+        return res.status(200).send({
+            success: true,
+            message: "Lesson Plan Successfully Posted",
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({
             success: false,
-            message: "Unauthorised Request",
+            message: "Error while posting Syllabus",
         });
     }
-    let lpUrl = req.body.data.url;
-    let lp = new Material({
-        name : subject.name + "_Lesson Plan",
-        url : lpUrl,
-    })
-    let savedLP = await lp.save();
-    subject.lessonPlan = savedLP._id;
-    await subject.save();
-    return res.status(200).send({
-        success: true,
-        message: "Lesson Plan Successfully Posted",
-    });
-}catch(err){
-    console.log(err);
-    return res.status(500).send({
-        success: false,
-        message: "Error while posting Syllabus",
-    });
-}
 
 });
 
@@ -132,80 +134,80 @@ try{
 //Format 
 // { family : "" ,unitNo : "" , title : "" , desc : "" , files : [{name : "" , url : ""}]}
 router.post("/theory/:subId", async (req, res) => {
-try {
-    const { subId } = req.params;
-    const { id: userId, data } = req.body;
+    try {
+        const { subId } = req.params;
+        const { id: userId, data } = req.body;
 
-    const subject = await Subject.findById(subId);
-    if (!subject) {
-        return res.status(404).send({
+        const subject = await Subject.findById(subId);
+        if (!subject) {
+            return res.status(404).send({
+                success: false,
+                message: "Subject not found",
+            });
+        }
+
+        if (subject.admin != userId) {
+            return res.status(401).send({
+                success: false,
+                message: "Unauthorized Request",
+            });
+        }
+
+        const { error } = moduleValidationSchema.validate(data);
+        if (error) {
+            return res.status(400).send({
+                success: false,
+                message: error.details[0].message,
+            });
+        }
+
+        const { family, unitNo, files = [], title, desc } = data;
+
+        if (!unitNo || !title || files.length === 0) {
+            return res.status(400).send({
+                success: false,
+                message: "Missing required fields",
+            });
+        }
+
+
+        const newModule = new Module({
+            family: family,
+            no: unitNo,
+            title,
+            desc: desc || "",
+        });
+
+        // Save all files in parallel
+        const materialPromises = files.map(async (file) => {
+            const newMaterial = new Material({
+                name: `${subject.name}_Unit-${unitNo}_${file.name}`,
+                url: file.url,
+            });
+            return await newMaterial.save();
+        });
+
+        const savedMaterials = await Promise.all(materialPromises);
+
+        newModule.mats = savedMaterials.map(material => material._id);
+        const savedModule = await newModule.save();
+
+        subject.components.push(savedModule._id);
+        await subject.save();
+
+        return res.status(200).send({
+            success: true,
+            message: "Module saved successfully",
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({
             success: false,
-            message: "Subject not found",
+            message: "Error while posting module",
+            error: err.message,
         });
     }
-
-    if (subject.admin != userId) {
-        return res.status(401).send({
-            success: false,
-            message: "Unauthorized Request",
-        });
-    }
-
-    const { error } = moduleValidationSchema.validate(data);
-    if (error) {
-        return res.status(400).send({
-            success: false,
-            message: error.details[0].message,
-        });
-    }
-
-    const { family, unitNo, files = [], title, desc } = data;
-
-    if (!unitNo || !title || files.length === 0) {
-        return res.status(400).send({
-            success: false,
-            message: "Missing required fields",
-        });
-    }
-    
-
-    const newModule = new Module({
-        family: family,
-        no: unitNo,
-        title,
-        desc: desc || "",
-    });
-
-    // Save all files in parallel
-    const materialPromises = files.map(async (file) => {
-        const newMaterial = new Material({
-            name: `${subject.name}_Unit-${unitNo}_${file.name}`,
-            url: file.url,
-        });
-        return await newMaterial.save();
-    });
-
-    const savedMaterials = await Promise.all(materialPromises);
-
-    newModule.mats = savedMaterials.map(material => material._id);
-    const savedModule = await newModule.save();
-
-    subject.components.push(savedModule._id);
-    await subject.save();
-
-    return res.status(200).send({
-        success: true,
-        message: "Module saved successfully",
-    });
-
-} catch (err) {
-    console.error(err);
-    return res.status(500).send({
-        success: false,
-        message: "Error while posting module",
-        error: err.message,
-    });
-}
 });
 //I missed to add the due date for assignments so , The trick to post the due is 
 //Desc format should be "duedate | Actual Description" or any other character
@@ -214,68 +216,68 @@ try {
 //Upload Model Qps
 //Format
 //{ files : [{name : "",url : ""}]}
-router.post("/modelQP/:subId" , async (req,res)=>{
-try {
-    const { subId } = req.params;
-    const { id: userId, data } = req.body;
+router.post("/modelQP/:subId", async (req, res) => {
+    try {
+        const { subId } = req.params;
+        const { id: userId, data } = req.body;
 
-    const subject = await Subject.findById(subId);
-    if (!subject) {
-        return res.status(404).send({
+        const subject = await Subject.findById(subId);
+        if (!subject) {
+            return res.status(404).send({
+                success: false,
+                message: "Subject not found",
+            });
+        }
+
+        if (subject.admin != userId) {
+            return res.status(401).send({
+                success: false,
+                message: "Unauthorized Request",
+            });
+        }
+
+        const { files } = data;
+        if (files.length == 0) {
+            return res.status(402).send({
+                success: false,
+                message: "No files to save, Array is empty :("
+            })
+        }
+
+        // Save all files in parallel
+        const materialPromises = files.map(async (file) => {
+            const newMaterial = new Material({
+                name: `${subject.name}_PYQ_${file.name}`,
+                url: file.url,
+            });
+            return await newMaterial.save();
+        });
+
+        const savedMaterials = await Promise.all(materialPromises);
+
+        subject.moduleQp = savedMaterials.map((mat) => (mat._id));
+        await subject.save();
+
+        return res.status(200).send({
+            success: true,
+            message: "Model Question Papers saved successfully",
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({
             success: false,
-            message: "Subject not found",
+            message: "Error while posting Model Question Papers",
+            error: err.message,
         });
     }
-
-    if (subject.admin != userId) {
-        return res.status(401).send({
-            success: false,
-            message: "Unauthorized Request",
-        });
-    }
-
-    const { files } = data;
-    if(files.length == 0){
-        return res.status(402).send({
-            success : false,
-            message : "No files to save, Array is empty :("
-        })
-    }
-
-    // Save all files in parallel
-    const materialPromises = files.map(async (file) => {
-        const newMaterial = new Material({
-            name: `${subject.name}_PYQ_${file.name}`,
-            url: file.url,
-        });
-        return await newMaterial.save();
-    });
-
-    const savedMaterials = await Promise.all(materialPromises);
-
-    subject.moduleQp = savedMaterials.map((mat)=>(mat._id));
-    await subject.save();
-
-    return res.status(200).send({
-        success: true,
-        message: "Model Question Papers saved successfully",
-    });
-
-} catch (err) {
-    console.error(err);
-    return res.status(500).send({
-        success: false,
-        message: "Error while posting Model Question Papers",
-        error: err.message,
-    });
-}
 });
 
 //Upload Refernce Links
 //Format
 // {ref : ["",""]}
-router.post("/refs/:subId", async (req,res)=>{
-    try{
+router.post("/refs/:subId", async (req, res) => {
+    try {
 
         const { subId } = req.params;
         const { id: userId, data } = req.body;
@@ -295,10 +297,10 @@ router.post("/refs/:subId", async (req,res)=>{
             });
         }
 
-        if(data.refs.length == 0){
+        if (data.refs.length == 0) {
             return res.status(400).send({
-                success : true,
-                message : "Refs are Empty :( "
+                success: true,
+                message: "Refs are Empty :( "
             })
         }
 
@@ -308,7 +310,7 @@ router.post("/refs/:subId", async (req,res)=>{
             success: true,
             message: "References saved successfully"
         });
-    }catch(err){
+    } catch (err) {
         console.error(err);
         return res.status(500).send({
             success: false,

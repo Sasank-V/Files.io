@@ -3,13 +3,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Download, Upload, FileText } from 'lucide-react'
-import { storage } from '@/../firebase'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { Upload } from 'lucide-react'
 import axios from '@/api/axios'
+import uploadFile from '@/firebase/firebaseUtils'
+import useAxiosPrivate from '@/hooks/useAxiosPrivate'
+import useAuth from '@/hooks/useAuth'
+import SyllabusLessonViewComponent from '@/components/SyllabusLessonViewComponent'
 
-const SyllabusUploadComponent = ({ subjectId, currentSyllabus }) => {
+const SyllabusUploadComponent = ({ subjectId }) => {
+    const [file, setFile] = useState(null)
     const [subject, setSubject] = useState({});
+    const [currentSyllabus, setCurrentSyllabus] = useState({ filename: "", url: "" });
+    const axiosPrivate = useAxiosPrivate();
+    const { auth } = useAuth();
 
     useEffect(() => {
         const fetchSubjectDetails = async () => {
@@ -19,10 +25,19 @@ const SyllabusUploadComponent = ({ subjectId, currentSyllabus }) => {
             setSubject(data.data);
         }
 
-        fetchSubjectDetails();
-    }, [])
+        const fetchSyllabusDetails = async () => {
+            const res = await axios.get(`/learn/syll/${subjectId}`);
+            const syllabus = res.data.data;
 
-    const [file, setFile] = useState(null)
+            setCurrentSyllabus((prev) => ({ ...prev, filename: syllabus?.name, url: syllabus?.url }));
+
+            console.log(res);
+        }
+
+        fetchSubjectDetails();
+        fetchSyllabusDetails();
+    }, []);
+
 
     const handleFileChange = (e) => {
         if (e.target.files) {
@@ -32,54 +47,20 @@ const SyllabusUploadComponent = ({ subjectId, currentSyllabus }) => {
     }
 
     const handleUpload = async () => {
-        if (!file) return
+        const fileName = subject.name + "_Syllabus.pdf";
+        const url = await uploadFile(file, subjectId, "syllabus", fileName);
 
-        const f = file[0];
-        const storageRef = ref(storage, `/${subjectId}/syllabus/${f.name}`);
+        const response = await axiosPrivate.post(`/admin/upload/syll/${subjectId}`, { url: url, access_token: auth.access_token });
 
-        try {
-            const snapshot = await uploadBytes(storageRef, f);
+        setCurrentSyllabus((prev) => ({ ...prev, filename: fileName, url }));
 
-            const downloadedUrl = await getDownloadURL(snapshot.ref);
-
-            console.log(downloadedUrl);
-
-        } catch (error) {
-            console.error(error)
-        }
-
-    }
-
-    const handleDownload = () => {
-        console.log(`Downloading ${subject.name} syllabus PDF`)
+        console.log(response.data);
     }
 
     return (
         <div className="space-y-6 w-full max-w-3xl mx-auto">
             {/* Current Syllabus Card */}
-            <Card>
-                <CardHeader>
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <CardTitle className="text-2xl font-bold text-[#fe965e]">Current Syllabus</CardTitle>
-                            <CardDescription className="mt-1">View or download the current syllabus for {subject.name}</CardDescription>
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent className="flex justify-between items-center">
-                    <div className="flex items-center">
-                        <FileText className="h-6 w-6 text-[#fe965e] mr-2" />
-                        <span className="text-lg">{currentSyllabus || 'No syllabus uploaded'}</span>
-                    </div>
-                    <Button
-                        onClick={handleDownload}
-                        disabled={!currentSyllabus}
-                        className="bg-[#fe965e] hover:bg-[#e8854e] text-white rounded-full px-4 py-2 text-sm"
-                    >
-                        <Download className="mr-2 h-4 w-4" /> Download
-                    </Button>
-                </CardContent>
-            </Card>
+            <SyllabusLessonViewComponent subject={subject} current={currentSyllabus} />
 
             {/* Upload Syllabus Card */}
             <Card>
@@ -99,7 +80,7 @@ const SyllabusUploadComponent = ({ subjectId, currentSyllabus }) => {
                         <Input
                             id="syllabus-file"
                             type="file"
-                            accept=".pdf"
+                            accept=".pdf,.pptx"
                             multiple
                             onChange={handleFileChange}
                             className="file:mr-4 h-max py-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fe965e] file:text-white hover:file:bg-[#e8854e]"

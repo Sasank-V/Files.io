@@ -1,32 +1,46 @@
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Download, FileText, Video, Presentation, Upload } from 'lucide-react'
-
-const units = [
-    'Module 1',
-    'Module 2',
-    'Module 3',
-    'Module 4',
-    'Module 5',
-    'Module 6',
-    'Module 7',
-    'Module 8',
-]
-
-const materials = [
-    { name: 'Lecture Notes', icon: FileText },
-    { name: 'Presentation Slides', icon: Presentation },
-    { name: 'Video Lecture', icon: Video },
-]
+import axios from '@/api/axios'
 
 const TheoryUploadComponent = ({ subjectId }) => {
-    const [activeUnit, setActiveUnit] = useState(units[0])
+    const units = [
+        'Module 1',
+        'Module 2',
+        'Module 3',
+        'Module 4',
+        'Module 5',
+        'Module 6',
+        'Module 7',
+        'Module 8',
+    ]
+
+    const [activeModule, setActiveModule] = useState(null)
     const [selectedUnit, setSelectedUnit] = useState('')
     const [selectedFiles, setSelectedFiles] = useState([])
+    const [modules, setModules] = useState([])
+    const [currentMaterials, setCurrentMaterials] = useState([])
+
+    useEffect(() => {
+        const fetchModules = async () => {
+            try {
+                const res = await axios.get(`/learn/module/all/${subjectId}/0`)
+                let data = res.data.data
+
+                console.log(data);
+                setModules(data)
+            } catch (error) {
+                console.error('Error fetching modules:', error)
+            }
+        }
+
+        fetchModules()
+    }, [subjectId])
 
     const handleDownload = (unit, material) => {
         console.log(`Downloading ${material} for ${unit} of ${subjectId}`)
@@ -34,6 +48,21 @@ const TheoryUploadComponent = ({ subjectId }) => {
 
     const handleFileChange = (e) => {
         setSelectedFiles(Array.from(e.target.files))
+    }
+
+    const handleModuleChange = async (module) => {
+        setActiveModule(module)
+
+        const moduleId = module.id
+
+        try {
+            const res = await axios.get(`learn/module/get/${moduleId}`)
+            const data = res.data.data.mats;
+            setCurrentMaterials(data)
+            console.log(data)
+        } catch (error) {
+            console.error('Error fetching module materials:', error)
+        }
     }
 
     const handleUpload = (e) => {
@@ -46,39 +75,76 @@ const TheoryUploadComponent = ({ subjectId }) => {
         }
     }
 
+    const getIcon = (materialType) => {
+        switch (materialType) {
+            case 'pdf':
+                return <FileText className="h-4 w-4 text-[#fe965e]" />
+            case 'pptx':
+                return <Presentation className="h-4 w-4 text-[#fe965e]" />
+            case 'mp4':
+                return <Video className="h-4 w-4 text-[#fe965e]" />
+            default:
+                return <FileText className="h-4 w-4 text-[#fe965e]" />
+        }
+    }
+
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {units.map((unit) => (
+                {modules.map((module) => (
                     <Card
-                        key={unit}
-                        className={`cursor-pointer transition-all duration-200 ${activeUnit === unit ? 'ring-2 ring-[#fe965e]' : 'hover:shadow-md'}`}
-                        onClick={() => setActiveUnit(unit)}
+                        key={module.id}
+                        className={`cursor-pointer transition-all duration-200 ${activeModule === module ? 'ring-2 ring-[#fe965e]' : 'hover:shadow-md'
+                            }`}
+                        onClick={() => handleModuleChange(module)}
                     >
                         <CardHeader>
-                            <CardTitle className="text-sm">{unit}</CardTitle>
+                            <CardTitle className="text-md font-bold">Module - {module.unitNo}</CardTitle>
+                            <CardTitle className="text-sm">{module.title}</CardTitle>
                         </CardHeader>
                     </Card>
                 ))}
             </div>
-            {activeUnit && (
+            {activeModule && (
                 <Card className="mt-4">
                     <CardHeader>
-                        <CardTitle className="text-xl text-[#fe965e]">{activeUnit}</CardTitle>
+                        <CardTitle className="text-xl text-[#fe965e]">{activeModule.title}</CardTitle>
+                        <CardTitle className="text-md text-[#fe965e]">{activeModule.title}</CardTitle>
                         <CardDescription>Download materials for this unit</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {materials.map((material) => (
-                                <Button
-                                    key={material.name}
-                                    onClick={() => handleDownload(activeUnit, material.name)}
-                                    className="bg-[#fe965e] hover:bg-[#e8854e] text-white"
-                                >
-                                    <material.icon className="mr-2 h-4 w-4" />
-                                    {material.name}
-                                </Button>
-                            ))}
+                        <div className="w-full overflow-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-[300px]">Name</TableHead>
+                                        <TableHead className="text-right">Action</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {currentMaterials.map((material) => (
+                                        <TableRow key={material.id}>
+                                            <TableCell className="font-medium">
+                                                <div className="flex items-center">
+                                                    {getIcon("5")}
+                                                    <span className="ml-2">{material.name}</span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => handleDownload(activeModule.title, material.name)}
+                                                    className="hover:text-[#fe965e] hover:bg-[#fe965e]/10"
+                                                >
+                                                    <Download className="h-4 w-4 mr-2" />
+                                                    <a href={material.url}>Download</a>
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </div>
                     </CardContent>
                 </Card>
@@ -97,9 +163,9 @@ const TheoryUploadComponent = ({ subjectId }) => {
                                     <SelectValue placeholder="Select a unit" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {units.map((unit) => (
-                                        <SelectItem key={unit} value={unit}>
-                                            {unit}
+                                    {modules.map((module) => (
+                                        <SelectItem key={module.id} value={`Module - ${module.unitNo}`}>
+                                            {`Module - ${module.unitNo} : ${module.title}`}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

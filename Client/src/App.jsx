@@ -24,15 +24,15 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route element={<Layout />}>
-        <Route path="/" element={auth?.isAdmin ? <TeacherHomePage /> : <HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/learn" element={<LearnPage />} />
-        <Route element={<Subject />}>
-          <Route path="/subject/:id" element={<DynamicSubjectComponent />} />
-        </Route>
-
         <Route element={<PersistentLogin />}>
+          <Route path="/" element={auth?.isAdmin ? <TeacherHomePage /> : <HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/learn" element={<LearnPage />} />
+          <Route element={<Subject />}>
+            <Route path="/subject/:id" element={<DynamicSubjectComponent />} />
+          </Route>
+
           <Route element={<RequireAuth />}>
             <Route path="/queries" element={auth?.isAdmin ? <QueriesAdminPage /> : <QueriesPage />} />
             <Route path="*" element={<NotFound />} />

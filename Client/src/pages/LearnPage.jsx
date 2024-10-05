@@ -8,7 +8,6 @@ import gsap from "gsap";
 import { useDebugValue, useEffect, useState } from "react"
 
 import useSubjects from "@/hooks/useSubjects";
-import { useEffect, useState } from "react"
 
 
 const LearnPage = () => {

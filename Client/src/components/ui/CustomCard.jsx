@@ -4,7 +4,6 @@ import useAuth from '@/hooks/useAuth'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ArrowRight } from 'lucide-react'
-import { useGSAP } from '@gsap/react'
 
 const CustomCard = ({ subjectData }) => {
     const { auth } = useAuth();
@@ -19,8 +18,6 @@ const CustomCard = ({ subjectData }) => {
     const queryParams = new URLSearchParams({
         id: subjectData.id,
     }).toString();
-
-    
 
     useEffect(() => {
         const card = cardRef.current;
@@ -52,23 +49,15 @@ const CustomCard = ({ subjectData }) => {
         card.addEventListener('mouseenter', handleEnter);
         card.addEventListener('mouseleave', handleLeave);
         setOnCard(false);
-
-        return () => {
-            card.removeEventListener('mouseenter', handleEnter);
-            card.removeEventListener('mouseleave', handleLeave);
-        };
     }, [onCard]);
 
     return (
         <div className='w-full h-full flex justify-center'>
             <Link
-                id='card'
                 ref={cardRef}
-                to={auth?.isAdmin ? `/upload/0?id=${queryParams}` : `/subject/0?${queryParams}`}
-                className="relative h-[350px] w-[300px] rounded-2xl overflow-hidden shadow-lg cursor-pointer bg-white group"
-                onPointerEnter={()=>setOnCard(true)}
                 to={`/subject/0?${queryParams}`}
-                className="h-[300px] w-[300px] rounded-3xl overflow-hidden shadow-xl cursor-pointer active:size-[305px] hover:opacity-85 transition-all duration-150"
+                className="relative h-[300px] w-[300px] rounded-3xl overflow-hidden shadow-xl cursor-pointer transition-all duration-300 hover:shadow-2xl"
+                onPointerEnter={()=>setOnCard(true)}
             >
                 <div className='h-full overflow-hidden'>
                     <img 
@@ -77,7 +66,6 @@ const CustomCard = ({ subjectData }) => {
                         alt={subjectData.name} 
                         className='w-full h-full object-cover transition-transform duration-300 brightness-75' 
                     />
-                    <div></div>
                 </div>
                 <div 
                     ref={overlayRef}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,useEffect,useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { toast } from 'react-toastify'
 import useAuth from '@/hooks/useAuth'
 import axios from 'axios'
+import gsap from 'gsap'
 
 const LoginPage = () => {
     const { setAuth } = useAuth();
@@ -17,6 +18,26 @@ const LoginPage = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
+
+    const svgRef = useRef(null);
+
+    useEffect(() => {
+        const svg = svgRef.current;    
+        gsap.to(svg, {
+            scale: 1,
+            rotation: 0,
+            duration: 1.5,
+            ease: "elastic.out(1, 0.3)",
+        });
+
+        const floatTimeline = gsap.timeline({ repeat: -1, yoyo: true });
+        floatTimeline.to(svg, {
+            y: -20,
+            duration: 2,
+            ease: "power1.inOut",
+        });
+
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -127,7 +148,7 @@ const LoginPage = () => {
             </div>
             <div className='md:flex hidden w-[50%] justify-center h-[95vh]'>
                 <div className='w-[60%] h-[90%] rounded-b-full bg-[#f9d9c6] flex items-center justify-center'>
-                    <svg className="w-1/2 h-1/2 text-[#fe965e]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg ref={svgRef} className="w-1/2 h-1/2 text-[#fe965e]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>

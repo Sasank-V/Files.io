@@ -1,38 +1,89 @@
 'use client'
+
 import { Link, Outlet, useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { Search, Menu } from 'lucide-react'
+import { Menu, X, Zap } from 'lucide-react'
 import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css'
 import useAuth from '@/hooks/useAuth'
 import useLogout from '@/hooks/useLogout'
 
-const Layout = ({ children }) => {
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
+
+export default function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { auth } = useAuth();
-  const logout = useLogout();
-  const navigate = useNavigate();
+  const { auth } = useAuth()
+  const logout = useLogout()
+  const navigate = useNavigate()
+  const zapRef = useRef(null)
 
   const handleLogout = async () => {
-    await logout();
+    await logout()
     navigate("/login")
+  }
+
+  useGSAP(() => {
+    gsap.from("#logo", {
+      opacity: 0,
+      duration: 0.75,
+      delay: 0.5,
+      x: -50,
+      ease: "power4.out",
+    })
+    // gsap.from("#nav", {
+    //   opacity: 0,
+    //   stagger: 0.5,
+    //   duration: 0.75,
+    //   y: -30,
+    // })
+    // gsap.from(zapRef.current, {
+    //   scale: 0,
+    //   rotation: -180,
+    //   duration: 1,
+    //   ease: "elastic.out(1, 0.3)",
+    // })
+  }, [])
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isMenuOpen])
+
+  const handleZapHover = () => {
+    gsap.to(zapRef.current, {
+      scale: 1.2,
+      rotation: 20,
+      duration: 0.3,
+      ease: "power2.out",
+    })
+  }
+
+  const handleZapLeave = () => {
+    gsap.to(zapRef.current, {
+      scale: 1,
+      rotation: 0,
+      duration: 0.3,
+      ease: "power2.in",
+    })
   }
 
   return (
     <div className="flex flex-col w-[100vw] h-max bg-[rgb(252,239,231)] min-h-screen font-vssemibold">
-      <header
-        className="sticky top-0 z-50 w-[100vw] border-b bg-inherit"
-      >
-        <div className="p-4 px-10 flex h-14 items-center justify-between w-full border-b-2 border-black">
+      <header className="sticky top-0 z-50 w-[100vw] border-b bg-inherit">
+        <div className="p-4 px-10 flex h-14 items-center justify-between w-full border-b-2 border-[#777777]">
           <div className="mr-4 hidden md:flex">
             <Link className="mr-6 flex items-center space-x-2" to="/">
-              <span className="hidden font-bold sm:inline-block ">Files.io</span>
+              <span id="logo" className="hidden font-bold sm:inline-block text-lg">Files.io</span>
             </Link>
-            <nav id="#navs" className="flex ml-10 items-center space-x-6 text-md font-medium ">
-              <Link to="/">Home</Link>
-              <Link to="/learn">Learn</Link>
-              <Link to="/queries">Queries</Link>
+            <nav className="flex ml-10 items-center space-x-6 text-md font-medium">
+              <Link to="/" id='nav'>Home</Link>
+              <Link to="/learn" id='nav'>Learn</Link>
+              <Link to="/queries" id='nav'>Queries</Link>
             </nav>
           </div>
           <button
@@ -40,42 +91,71 @@ const Layout = ({ children }) => {
             type="button"
             aria-haspopup="dialog"
             aria-expanded={isMenuOpen}
-            aria-controls="radix-:R1mcq:"
+            aria-controls="mobile-menu"
             onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <Menu className="h-5 w-5" />
+            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             <span className="sr-only">Toggle Menu</span>
           </button>
-          <div
-            className="flex flex-1 items-center space-x-3 justify-end">
-            {/* <div className="w-full flex-1 md:w-auto md:flex-none">
-                <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search resources..."
-                    className="pl-8 md:w-[300px] lg:w-[300px]" />
-                </div>
-              </div> */}
+          <div className="flex flex-1 items-center space-x-3 justify-end">
             {!auth.access_token &&
               <>
-                <Link to="/login">
+                <Link to="/login" id='nav'>
                   <Button variant="outline" className="bg-[#333333] border-0 text-white hover:bg-[#666666] hover:text-white">Login</Button>
                 </Link>
-                <Link to="/signup">
+                <Link to="/signup" id='nav'>
                   <Button variant="outline" className="bg-[rgb(255,161,98)] text-white border-0">Register</Button>
                 </Link>
               </>
             }
-            {
-              auth.access_token &&
+            {auth.access_token &&
               <Button variant="outline" className="bg-[rgb(255,161,98)] text-white border-0" onClick={handleLogout}>Logout</Button>
             }
+            <div 
+              className="ml-4 cursor-pointer"
+              onMouseEnter={handleZapHover}
+              onMouseLeave={handleZapLeave}
+              aria-label="Quick action"
+            >
+              <Zap 
+                ref={zapRef}
+                className="h-8 w-8 text-[rgb(255,161,98)]"
+              />
+            </div>
           </div>
         </div>
-      </header >
+      </header>
+      
+      {/* Mobile Menu */}
+      <div
+        className={`fixed inset-0 z-50 transform ${
+          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        } transition-transform duration-300 ease-in-out md:hidden`}
+      >
+        <div className="fixed inset-0 bg-black bg-opacity-25" onClick={() => setIsMenuOpen(false)}></div>
+        <nav className="relative flex flex-col h-full w-64 max-w-sm py-6 px-6 bg-white shadow-xl overflow-y-auto">
+          <div className="flex items-center mb-8 border-b-2 border-[#777777]">
+            <Link className="mr-auto text-lg font-bold" to="/" onClick={() => setIsMenuOpen(false)}>
+              Files.io
+            </Link>
+            <button
+              className="p-2 focus:outline-none focus:ring"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="flex flex-col space-y-4">
+            <Link to="/" className="text-sm" onClick={() => setIsMenuOpen(false)}>Home</Link>
+            <Link to="/learn" className="text-sm" onClick={() => setIsMenuOpen(false)}>Learn</Link>
+            <Link to="/queries" className="text-sm" onClick={() => setIsMenuOpen(false)}>Queries</Link>
+          </div>
+        </nav>
+      </div>
+
       <div>
         <div className='flex h-max min-h-[95vh] w-full'>
           <Outlet />
-        </div >
+        </div>
       </div>
       <div className='h-[20vh] flex-grow-0 flex w-full bg-black text-white p-10'>
         This is the footer
@@ -84,9 +164,6 @@ const Layout = ({ children }) => {
       <div className="absolute bg-red-100 z-100">
         <ToastContainer />
       </div>
-    </div >
-  );
+    </div>
+  )
 }
-
-
-export default Layout

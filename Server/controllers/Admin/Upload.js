@@ -216,12 +216,12 @@ router.post("/comp/:subId", async (req, res) => {
 
 //Upload materials to a modules
 //Fomat
-//{name : "" , url : ""}
+//{ files : [{name : "" , url : ""}]}
 router.post("/module/:subId/:modId", async (req,res)=>{
     try{
         const { modId , subId} = req.params;
         const { id: userId, data } = req.body;
-        let { name,url} = data;
+        let {files} = data;
         const subject = await Subject.findById(subId);
         const module = await Module.findById(modId);
         if (!module || !subject) {
@@ -236,16 +236,16 @@ router.post("/module/:subId/:modId", async (req,res)=>{
                 message: "Unauthorized Request",
             });
         }
-        let newMaterial = new Material({
-            name : subject.name + "_" + module.title + "_" + name,
-            url : url,
-        })
-        const savedMaterial = await newMaterial.save();
-        module.mats.push(savedMaterial._id);
+        let newMats = files.map((file) => (new Material({
+            name : file.name + "_" + module.no + "_" + subject.name,
+            url : file.url
+        }).save()));
+        const savedMats = await Promise.all(newMats);
+        module.mats = module.mats.concat(savedMats.map((mat) => (mat._id)));
         await module.save();
         return res.status(200).send({
             success : true,
-            message : "Material uploaded in the module successfully"
+            message : "Materials uploaded successfully"
         })
     }catch(err){
         console.error(err);

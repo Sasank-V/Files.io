@@ -61,7 +61,6 @@ const HomePage = () => {
             });
         }
     }, []);
-
     return (
         <main className='flex w-full h-full overflow-y-scroll'>
             <div className="md:w-[50%] w-full p-10">

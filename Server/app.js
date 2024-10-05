@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import cookieParser from 'cookie-parser'
 
 import connectDB from "./database.js";
-import  queryRouter from "./controllers/Query.js";
+import queryRouter from "./controllers/Query.js";
 import learnRouter from "./controllers/Learn.js";
 import adminRouter from "./controllers/Admin.js";
 import authRouter from "./controllers/Auth.js";
@@ -15,23 +15,25 @@ import refreshRouter from "./controllers/Refresh.js";
 //Remove the parameter isAdmin set to true for all the users signing up in Auth.js
 
 const verifyJWT = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader) return res.sendStatus(401);
-  
-    const token = authHeader.split(' ')[1];
-  
+    // const authHeader = req.headers['Authorization'];
+
+    // if (!authHeader) return res.sendStatus(401);
+
+    const token = req.body.access_token;
+
+    // const token = authHeader.split(' ')[1];
+
     jwt.verify(
         token,
         process.env.JWTSECRET_KEY,
         (err, decoded) => {
             if (err) {
                 return res.sendStatus(403);
-
             }
             req.body = {
                 id: decoded.id,
                 user: decoded.username,
-                data : req.body,
+                data: req.body,
             }
             next();
         }

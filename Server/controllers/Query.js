@@ -33,8 +33,8 @@ router.get("/me", async (req, res) => {
 
 //Get all users Queries
 //id - userId 
-router.get("/all/:id", async (req,res)=>{
-    try{
+router.get("/all/:id", async (req, res) => {
+    try {
         const { id } = req.params;
         const user = await User.findById(id).populate("queries");
         // console.log(id)
@@ -60,24 +60,24 @@ router.get("/all/:id", async (req,res)=>{
 })
 
 //Get all the admins name and _id
-router.get("/admins", async (req,res)=>{
-    try{
-        const admins = await User.find({isAdmin : true});
+router.get("/admins", async (req, res) => {
+    try {
+        const admins = await User.find({ isAdmin: true });
         const result = admins.map((admin) => ({
-            name : admin.username,
-            id : admin._id, 
+            name: admin.username,
+            id: admin._id,
         }));
         return res.status(200).send({
-            success : true,
-            message : "Admins Successfully found",
-            data : result,
+            success: true,
+            message: "Admins Successfully found",
+            data: result,
         });
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return res.status(500).send({
-            success : false,
-            message : "Error while fetching admins",
-            data : []
+            success: false,
+            message: "Error while fetching admins",
+            data: []
         })
     }
 })
@@ -85,7 +85,7 @@ router.get("/admins", async (req,res)=>{
 //Post a query
 //Format
 //{ to: user_id , ques : ""}
-router.post("/post",async (req, res) => {
+router.post("/post", async (req, res) => {
     try {
         const { to, ques } = req.body.data;
         const from = req.body.id;
@@ -99,14 +99,14 @@ router.post("/post",async (req, res) => {
         // Find the 'from' and 'to' users by ID
         const fromUser = await User.findById(from);
         const toUser = await User.findById(to);
-        
+
         if (!fromUser || !toUser) {
             return res.status(404).send({
                 success: false,
                 message: "Users not found",
             });
         }
-        
+
         // Create a new query
         const newQuery = new Query({
             from: from,
@@ -147,44 +147,44 @@ router.post("/post",async (req, res) => {
 //Only for admins
 //Format
 //{reply : ""}
-router.put("/reply/admin/:queryId",async (req,res)=>{
-    try{
+router.put("/reply/admin/:queryId", async (req, res) => {
+    try {
         let userId = req.body.id;
-        let {queryId} = req.params;
+        let { queryId } = req.params;
         const currUser = await User.findById(userId);
         const currQuery = await Query.findById(queryId);
-        if(!currQuery){
+        if (!currQuery) {
             return res.status(404).send({
-                success : false,
-                message : "Query not found",
+                success: false,
+                message: "Query not found",
             });
         }
-        if(currQuery.to != userId || !currUser.isAdmin){
+        if (currQuery.to != userId || !currUser.isAdmin) {
             return res.status(400).send({
-                success : false,
-                message : "Unauthorised Request to Reply to a Query"
+                success: false,
+                message: "Unauthorised Request to Reply to a Query"
             });
         }
         const data = req.body.data;
         let reply = data.reply;
-        if(!reply || reply === ""){
+        if (!reply || reply === "") {
             return res.status(402).send({
-                success : false,
-                message : "Reply is Empty :("
+                success: false,
+                message: "Reply is Empty :("
             });
         }
         currQuery.res = reply;
         currQuery.status = true;
         await currQuery.save();
         return res.status(200).send({
-            success : true,
-            message : "Query Reply Saved successfully"
+            success: true,
+            message: "Query Reply Saved successfully"
         });
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return res.status(500).send({
-            success : false,
-            message : "Error while posting the reply",
+            success: false,
+            message: "Error while posting the reply",
         })
     }
 });
@@ -193,84 +193,84 @@ router.put("/reply/admin/:queryId",async (req,res)=>{
 //For all users
 //Format
 //{ques : ""}
-router.put("/edit/:queryId",async (req,res)=>{
-    try{
+router.put("/edit/:queryId", async (req, res) => {
+    try {
         let userId = req.body.id;
-        let {queryId} = req.params;
+        let { queryId } = req.params;
         const currQuery = await Query.findById(queryId);
-        if(!currQuery){
+        if (!currQuery) {
             return res.status(404).send({
-                success : false,
-                message : "Query not found"
+                success: false,
+                message: "Query not found"
             });
         }
-        if(currQuery.from != userId){
+        if (currQuery.from != userId) {
             return res.status(400).send({
-                success : false,
-                message : "Unathorised Request to Edit a Query"
+                success: false,
+                message: "Unathorised Request to Edit a Query"
             })
         }
-        if(currQuery.status){
+        if (currQuery.status) {
             return res.status(402).send({
-                success : false,
-                message : "Question has already been replied , Create a NewQuery",
+                success: false,
+                message: "Question has already been replied , Create a NewQuery",
             })
         }
         const modifiedQues = req.body.data.ques;
-        if(!modifiedQues){
+        if (!modifiedQues) {
             return res.status(402).send({
-                success : false,
-                message : "Question is Empty :("
+                success: false,
+                message: "Question is Empty :("
             });
         }
         currQuery.ques = modifiedQues;
         await currQuery.save();
         return res.status(200).send({
-            success : true,
-            message : "Query Question Updated Successfully"
+            success: true,
+            message: "Query Question Updated Successfully"
         });
-    }catch(err){
+    } catch (err) {
         return res.status(200).send({
-            success : false,
-            message : "Error while updating questio of a query"
+            success: false,
+            message: "Error while updating questio of a query"
         })
     }
 });
 
 //Delete a query
 //Can be done by either fromUser or toUser
-router.delete("/delete/:queryId",async (req,res)=>{
-    try{
+router.delete("/delete/:queryId", async (req, res) => {
+    try {
         let userId = req.body.id;
-        let {queryId} = req.params;
+        let { queryId } = req.params;
         const currQuery = await Query.findById(queryId);
-        if(!currQuery){
+        if (!currQuery) {
             return res.status(404).send({
-                success : false,
-                message : "Query not found",
+                success: false,
+                message: "Query not found",
             });
         }
-        if(currQuery.from != userId && currQuery.to != userId){
+        if (currQuery.from != userId && currQuery.to != userId) {
             return res.status(400).send({
-                success : false,
-                message : "Unauthorised Request to delete a query"
+                success: false,
+                message: "Unauthorised Request to delete a query"
             });
         }
         const fromUser = await User.findById(currQuery.from);
         const toUser = await User.findById(currQuery.to);
-    
-        fromUser.queries = fromUser.queries.filter((qId)=>(qId != queryId));
-        toUser.queries = toUser.queries.filter((qId)=>(qId != queryId));
+
+        fromUser.queries = fromUser.queries.filter((qId) => (qId != queryId));
+        toUser.queries = toUser.queries.filter((qId) => (qId != queryId));
         await Query.findByIdAndDelete(queryId);
         return res.status(200).send({
-            success : true,
-            message : "Query Deleted Successfully"
+            success: true,
+            message: "Query Deleted Successfully"
         });
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return res.status(500).send({
-            success : false,
-            message : "Error while deleting query"
+            success: false,
+            message: "Error while deleting query"
         })
     }
 });

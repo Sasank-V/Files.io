@@ -1,3 +1,4 @@
+import LoadingComponent from "@/components/loading"
 import useAuth from "@/hooks/useAuth"
 import useRefreshToken from "@/hooks/useRefreshToken"
 import { useEffect, useState } from "react"
@@ -28,7 +29,7 @@ const PersistentLogin = () => {
         <>
             {
                 isLoading
-                    ? <p>Loading...</p>
+                    ? <LoadingComponent/>
                     : <Outlet />
             }
         </>

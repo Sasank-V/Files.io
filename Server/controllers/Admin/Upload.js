@@ -7,6 +7,7 @@ import { moduleValidationSchema, subjectSchema } from "../../Schema.js";
 import User from "../../models/users.js";
 import Module from "../../models/modules.js";
 import Material from "../../models/materials.js";
+import { model } from "mongoose";
 
 //Route - /api/admin/upload
 
@@ -133,7 +134,7 @@ router.post("/lp/:subId", async (req, res) => {
 //Family : 0 - Theory , 1 - Lab , 2 - Assignments
 //Format 
 // { family : "" ,unitNo : "" , title : "" , desc : "" , files : [{name : "" , url : ""}]}
-router.post("/theory/:subId", async (req, res) => {
+router.post("/comp/:subId", async (req, res) => {
     try {
         const { subId } = req.params;
         const { id: userId, data } = req.body;
@@ -163,7 +164,7 @@ router.post("/theory/:subId", async (req, res) => {
 
         const { family, unitNo, files = [], title, desc } = data;
 
-        if (!unitNo || !title || files.length === 0) {
+        if (!unitNo || !title ) {
             return res.status(400).send({
                 success: false,
                 message: "Missing required fields",
@@ -212,6 +213,49 @@ router.post("/theory/:subId", async (req, res) => {
 //I missed to add the due date for assignments so , The trick to post the due is 
 //Desc format should be "duedate | Actual Description" or any other character
 //So when we fetch it, Split it and show in seperate fields :)
+
+//Upload materials to a modules
+//Fomat
+//{name : "" , url : ""}
+router.post("/module/:subId/:modId", async (req,res)=>{
+    try{
+        const { modId , subId} = req.params;
+        const { id: userId, data } = req.body;
+        let { name,url} = data;
+        const subject = await Subject.findById(subId);
+        const module = await Module.findById(modId);
+        if (!module || !subject) {
+            return res.status(404).send({
+                success: false,
+                message: "Module/Subject not found",
+            });
+        }
+        if (subject.admin.toString() !== userId) {
+            return res.status(401).send({
+                success: false,
+                message: "Unauthorized Request",
+            });
+        }
+        let newMaterial = new Material({
+            name : subject.name + "_" + module.title + "_" + name,
+            url : url,
+        })
+        const savedMaterial = await newMaterial.save();
+        module.mats.push(savedMaterial._id);
+        await module.save();
+        return res.status(200).send({
+            success : true,
+            message : "Material uploaded in the module successfully"
+        })
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({
+            success: false,
+            message: "Error while posting module",
+            error: err.message,
+        });
+    }
+});
 
 //Upload Model Qps
 //Format

@@ -2,7 +2,6 @@ import express, { urlencoded } from "express";
 const router = express.Router();
 
 import Subject from "../../models/subjects.js";
-import { moduleValidationSchema, subjectSchema } from "../../Schema.js";
 
 import User from "../../models/users.js";
 import Module from "../../models/modules.js";

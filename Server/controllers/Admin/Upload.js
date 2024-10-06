@@ -156,7 +156,7 @@ router.post("/comp/:subId", async (req, res) => {
 
         const { family, unitNo, title, desc } = data;
 
-        if (!unitNo || !title ) {
+        if (!unitNo || !title) {
             return res.status(400).send({
                 success: false,
                 message: "Missing required fields",
@@ -198,11 +198,11 @@ router.post("/comp/:subId", async (req, res) => {
 //Upload materials to a modules
 //Fomat
 //{ files : [{name : "" , url : ""}]}
-router.post("/module/:subId/:modId", async (req,res)=>{
-    try{
-        const { modId , subId} = req.params;
+router.post("/module/:subId/:modId", async (req, res) => {
+    try {
+        const { modId, subId } = req.params;
         const { id: userId, data } = req.body;
-        let {files} = data;
+        let { files } = data;
         const subject = await Subject.findById(subId);
         const module = await Module.findById(modId);
         if (!module || !subject) {
@@ -218,17 +218,17 @@ router.post("/module/:subId/:modId", async (req,res)=>{
             });
         }
         let newMats = files.map((file) => (new Material({
-            name : file.name + "_" + module.no + "_" + subject.name,
-            url : file.url
+            name: file.name + "_" + module.no + "_" + subject.name,
+            url: file.url
         }).save()));
         const savedMats = await Promise.all(newMats);
         module.mats = module.mats.concat(savedMats.map((mat) => (mat._id)));
         await module.save();
         return res.status(200).send({
-            success : true,
-            message : "Materials uploaded successfully"
+            success: true,
+            message: "Materials uploaded successfully"
         })
-    }catch(err){
+    } catch (err) {
         console.error(err);
         return res.status(500).send({
             success: false,

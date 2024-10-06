@@ -18,13 +18,9 @@ export const subjectSchema = Joi.object({
     code : Joi.string().required(),
 });
 
-export const moduleValidationSchema = Joi.object({
-    family: Joi.number().valid(0, 1, 2).required(),
-    unitNo: Joi.number().required(),
-    title: Joi.string().required(),
-    desc: Joi.string().allow(''), // Optional description
-    files: Joi.array().items(Joi.object({
-      name: Joi.string().required(),
-      url: Joi.string().uri().required(),
-    })).min(1).required() // At least one file must be uploaded
-});
+// export const moduleValidationSchema = Joi.object({
+//     family: Joi.number().valid(0, 1, 2).required(),
+//     unitNo: Joi.number().required(),
+//     title: Joi.string().required(),
+//     desc: Joi.string().allow(''), // Optional description
+// });

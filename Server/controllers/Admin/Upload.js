@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 import Subject from "../../models/subjects.js";
-import { moduleValidationSchema, subjectSchema } from "../../Schema.js";
+import { subjectSchema } from "../../Schema.js";
 
 import User from "../../models/users.js";
 import Module from "../../models/modules.js";
@@ -133,7 +133,7 @@ router.post("/lp/:subId", async (req, res) => {
 //Upload Theory/Lab/Assignments Modules
 //Family : 0 - Theory , 1 - Lab , 2 - Assignments
 //Format 
-// { family : "" ,unitNo : "" , title : "" , desc : "" , files : [{name : "" , url : ""}]}
+// { family : "" ,unitNo : "" , title : "" , desc : "" }
 router.post("/comp/:subId", async (req, res) => {
     try {
         const { subId } = req.params;
@@ -154,15 +154,7 @@ router.post("/comp/:subId", async (req, res) => {
             });
         }
 
-        const { error } = moduleValidationSchema.validate(data);
-        if (error) {
-            return res.status(400).send({
-                success: false,
-                message: error.details[0].message,
-            });
-        }
-
-        const { family, unitNo, files = [], title, desc } = data;
+        const { family, unitNo, title, desc } = data;
 
         if (!unitNo || !title ) {
             return res.status(400).send({
@@ -179,18 +171,6 @@ router.post("/comp/:subId", async (req, res) => {
             desc: desc || "",
         });
 
-        // Save all files in parallel
-        const materialPromises = files.map(async (file) => {
-            const newMaterial = new Material({
-                name: `${subject.name}_Unit-${unitNo}_${file.name}`,
-                url: file.url,
-            });
-            return await newMaterial.save();
-        });
-
-        const savedMaterials = await Promise.all(materialPromises);
-
-        newModule.mats = savedMaterials.map(material => material._id);
         const savedModule = await newModule.save();
 
         subject.components.push(savedModule._id);
@@ -199,6 +179,7 @@ router.post("/comp/:subId", async (req, res) => {
         return res.status(200).send({
             success: true,
             message: "Module saved successfully",
+            data: newModule,
         });
 
     } catch (err) {

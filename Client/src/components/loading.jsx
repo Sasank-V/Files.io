@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import gsap from 'gsap'
 
-const LoadingComponent = () => {
+const LoadingComponent = ({text}) => {
     const containerRef = useRef(null)
     const dotsRef = useRef([])
     const textRef = useRef(null)
@@ -64,7 +64,7 @@ const LoadingComponent = () => {
                     {/* Dots will be appended here */}
                 </div>
                 <p ref={textRef} className="mt-8 text-2xl font-bold text-[#333333]">
-                    Loading...
+                    {text}...
                 </p>
             </CardContent>
         </Card>

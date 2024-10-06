@@ -64,7 +64,7 @@ export function Subject() {
                 {activeTab} <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[calc(100vw-2rem)] bg-[#222222] border-[#fe965e]">
+            <DropdownMenuContent className="w-[calc(100vw-2rem)] sm:w-[610px] md:hidden bg-[#222222] border-[#fe965e]">
               {navItems.map((item) => (
                 <DropdownMenuItem
                   key={item.path}
@@ -73,7 +73,7 @@ export function Subject() {
                   <NavLink
                     to={item.path}
                     className={({ isActive }) =>
-                      `w-full p-2 ${isActive ? 'text-[#fe965e]' : 'text-white'} hover:text-white`
+                      `w-full p-2 ${isActive ? 'text-[#fe965e]' : 'text-white'} hover:text-white font-vsregular`
                     }
                     onClick={() => setActiveTab(item.label)}
                   >

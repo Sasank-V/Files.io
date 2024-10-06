@@ -30,7 +30,7 @@ const LearnPage = () => {
     return (
         !subFetched ?
             <div className="w-full h-full">
-                <LoadingComponent />
+                <LoadingComponent text="Loading" />
             </div>
             :
             <div className="p-5 h-full w-full overflow-y-scroll">

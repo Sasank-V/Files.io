@@ -10,6 +10,7 @@ import TheoryDisplayComponent from '../TheoryDisplayComponent'
 import useAuth from '@/hooks/useAuth'
 import uploadFile from '@/firebase/firebaseUtils'
 import { toast } from 'react-toastify'
+import LoadingComponent from '../loading'
 
 export default function TheoryUploadComponent({ subjectId }) {
     const [selectedModule, setSelectedModule] = useState('')
@@ -17,6 +18,7 @@ export default function TheoryUploadComponent({ subjectId }) {
     const [modules, setModules] = useState([])
     const [materialName, setMaterialName] = useState('')
     const { auth } = useAuth();
+    const [doneUpload,setDoneUpload] = useState(true);
 
 
     const fetchModules = async () => {
@@ -32,7 +34,7 @@ export default function TheoryUploadComponent({ subjectId }) {
 
     useEffect(() => {
         fetchModules()
-    }, [subjectId])
+    }, [subjectId]);
 
     const handleFileChange = (e) => {
         if (e.target.files) {
@@ -47,6 +49,7 @@ export default function TheoryUploadComponent({ subjectId }) {
             alert('Please fill in all fields and select at least one file.')
             return
         }
+        setDoneUpload(false);
 
         const fileUrl = await uploadFile(selectedFile, subjectId, `components/0/${selectedModule}`, materialName);
         if (!fileUrl) {
@@ -56,7 +59,9 @@ export default function TheoryUploadComponent({ subjectId }) {
 
         try {
             const response = await axios.post(`/admin/upload/module/${subjectId}/${selectedModule}`, { access_token: auth.access_token, files: [{ name: materialName, url: fileUrl }] });
+
             console.log(response);
+            setDoneUpload(true);
 
             setSelectedModule('')
             setSelectedFile(null)
@@ -65,6 +70,8 @@ export default function TheoryUploadComponent({ subjectId }) {
         } catch (error) {
             toast.error("Error uploading material", { position: 'top-right' });
             console.error('Error uploading material:', error)
+        }finally{
+            setDoneUpload(true);
         }
     }
 
@@ -78,6 +85,7 @@ export default function TheoryUploadComponent({ subjectId }) {
                     <CardDescription>Upload new materials for a specific unit</CardDescription>
                 </CardHeader>
                 <CardContent>
+                    {!doneUpload? <LoadingComponent text="Uploading"/> :  
                     <form onSubmit={handleUpload} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="unit-select">Select Unit</Label>
@@ -117,7 +125,7 @@ export default function TheoryUploadComponent({ subjectId }) {
                             <Upload className="mr-2 h-4 w-4" />
                             Upload Materials
                         </Button>
-                    </form>
+                    </form>}
                 </CardContent>
             </Card>
         </div>

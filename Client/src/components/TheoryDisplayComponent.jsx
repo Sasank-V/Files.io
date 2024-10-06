@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -135,16 +136,24 @@ export default function TheoryDisplayComponent({ modules, subjectId }) {
     return (
         <>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {modules.map((module) => (
+                {modules.map((module, index) => (
                     <Card
                         key={module.id}
-                        className={`cursor-pointer transition-all duration-200 ${activeModule === module ? 'ring-2 ring-[#fe965e]' : 'hover:shadow-md'
-                            }`}
+                        className={`cursor-pointer transition-all duration-200 overflow-hidden ${
+                            activeModule === module 
+                                ? 'ring-2 ring-[#fe965e]' 
+                                : 'hover:shadow-lg hover:scale-105'
+                        }`}
                         onClick={() => handleModuleChange(module)}
+                        style={{
+                            background: `linear-gradient(135deg, 
+                                ${index % 2 === 0 ? '#2A2A2A' : '#3A3A3A'} 0%, 
+                                ${index % 2 === 0 ? '#3A3A3A' : '#2A2A2A'} 100%)`
+                        }}
                     >
                         <CardHeader>
-                            <CardTitle className="text-md font-bold">Module - {module.unitNo}</CardTitle>
-                            <CardTitle className="text-sm">{module.title}</CardTitle>
+                            <CardTitle className="text-md font-bold text-white">Module - {module.unitNo}</CardTitle>
+                            <CardTitle className="text-sm text-gray-300">{module.title}</CardTitle>
                         </CardHeader>
                     </Card>
                 ))}
@@ -233,24 +242,26 @@ export default function TheoryDisplayComponent({ modules, subjectId }) {
                 </Dialog>
             </div >
             {activeModule && (
-                <Card className="mt-4">
-                    <CardHeader>
+                <Card className="mt-4 overflow-hidden" style={{
+                    background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1A1A1A 100%)'
+                }}>
+                    <CardHeader className="relative z-10">
                         <CardTitle className="text-xl text-[#fe965e]">{activeModule.title}</CardTitle>
                         <CardDescription>Download materials for this unit</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <div className="w-full overflow-auto">
+                    <CardContent className="relative z-10">
+                        <div className="w-full overflow-auto bg-gray-800 bg-opacity-70 rounded-lg shadow-inner">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="w-[300px]">Name</TableHead>
-                                        <TableHead className="text-right">Action</TableHead>
+                                        <TableHead className="w-[300px] text-gray-300">Name</TableHead>
+                                        <TableHead className="text-right text-gray-300">Action</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {currentMaterials.map((material) => (
-                                        <TableRow key={material.id}>
-                                            <TableCell className="font-medium">
+                                        <TableRow key={material.id} className="border-b border-gray-700">
+                                            <TableCell className="font-medium text-gray-200">
                                                 <div className="flex items-center">
                                                     {getIcon(material.type)}
                                                     <span className="ml-2">{material.name}</span>
@@ -260,7 +271,7 @@ export default function TheoryDisplayComponent({ modules, subjectId }) {
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="hover:text-[#fe965e] hover:bg-[#fe965e]/10"
+                                                    className="text-gray-300 hover:text-[#fe965e] hover:bg-[#fe965e]/10"
                                                 >
                                                     <Download className="h-4 w-4 mr-2" />
                                                     <a href={material.url}>Download</a>

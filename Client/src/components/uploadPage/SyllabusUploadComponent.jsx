@@ -9,6 +9,7 @@ import uploadFile from '@/firebase/firebaseUtils'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import useAuth from '@/hooks/useAuth'
 import SyllabusLessonViewComponent from '@/components/SyllabusLessonViewComponent'
+import LoadingComponent from '../loading'
 
 const SyllabusUploadComponent = ({ subjectId }) => {
     const [file, setFile] = useState(null)
@@ -16,6 +17,7 @@ const SyllabusUploadComponent = ({ subjectId }) => {
     const [currentSyllabus, setCurrentSyllabus] = useState({ filename: "", url: "" });
     const axiosPrivate = useAxiosPrivate();
     const { auth } = useAuth();
+    const [doneUpload,setDoneUpload] = useState(true);
 
     useEffect(() => {
         const fetchSubjectDetails = async () => {
@@ -48,11 +50,13 @@ const SyllabusUploadComponent = ({ subjectId }) => {
 
     const handleUpload = async () => {
         const fileName = subject.name + "_Syllabus.pdf";
+        setDoneUpload(false);
         const url = await uploadFile(file, subjectId, "syllabus", fileName);
 
         const response = await axiosPrivate.post(`/admin/upload/syll/${subjectId}`, { url: url, access_token: auth.access_token });
 
         setCurrentSyllabus((prev) => ({ ...prev, filename: fileName, url }));
+        setDoneUpload(true);
 
         console.log(response.data);
     }
@@ -73,6 +77,7 @@ const SyllabusUploadComponent = ({ subjectId }) => {
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    {!doneUpload ? <LoadingComponent text="Uploading"/> : <>
                     <div className="space-y-2">
                         <Label htmlFor="syllabus-file" className="text-sm font-medium text-gray-700">
                             Select Syllabus PDF
@@ -94,6 +99,7 @@ const SyllabusUploadComponent = ({ subjectId }) => {
                             <Upload className="mr-2 h-5 w-5" /> Upload Syllabus PDF
                         </Button>
                     </div>
+                    </>}
                 </CardContent>
             </Card>
         </div>

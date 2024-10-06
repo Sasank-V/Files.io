@@ -12,7 +12,7 @@ import uploadFile from '@/firebase/firebaseUtils'
 import { toast } from 'react-toastify'
 import LoadingComponent from '../loading'
 
-export default function TheoryUploadComponent({ subjectId }) {
+export default function LabsUploadComponent({ subjectId }) {
     const [selectedModule, setSelectedModule] = useState('')
     const [selectedFile, setSelectedFile] = useState(null)
     const [modules, setModules] = useState([])
@@ -23,7 +23,7 @@ export default function TheoryUploadComponent({ subjectId }) {
 
     const fetchModules = async () => {
         try {
-            const res = await axios.get(`/learn/module/all/${subjectId}/0`)
+            const res = await axios.get(`/learn/module/all/${subjectId}/1`)
             let data = res.data.data
             console.log(data)
             setModules(data)
@@ -51,7 +51,7 @@ export default function TheoryUploadComponent({ subjectId }) {
         }
         setDoneUpload(false);
 
-        const fileUrl = await uploadFile(selectedFile, subjectId, `components/0/${selectedModule}`, materialName);
+        const fileUrl = await uploadFile(selectedFile, subjectId, `components/1/${selectedModule}`, materialName);
         if (!fileUrl) {
             toast.error("File not uploaded", { position: 'top-right' });
             return;
@@ -77,26 +77,26 @@ export default function TheoryUploadComponent({ subjectId }) {
 
     return (
         <div className="space-y-6">
-            <TheoryDisplayComponent modules={modules} setModules={setModules} subjectId={subjectId} />
+            <TheoryDisplayComponent modules={modules} setModules={setModules} subjectId={subjectId} isTheory={false} />
 
             <Card>
                 <CardHeader>
                     <CardTitle className="text-xl text-[#fe965e]">Add Materials</CardTitle>
-                    <CardDescription>Upload new materials for a specific module</CardDescription>
+                    <CardDescription>Upload new materials for a specific experiment</CardDescription>
                 </CardHeader>
                 <CardContent>
                     {!doneUpload ? <LoadingComponent text="Uploading" /> :
                         <form onSubmit={handleUpload} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="unit-select">Select Module</Label>
+                                <Label htmlFor="unit-select">Select Experiment</Label>
                                 <Select onValueChange={setSelectedModule} value={selectedModule}>
                                     <SelectTrigger id="unit-select">
-                                        <SelectValue placeholder="Select a module" />
+                                        <SelectValue placeholder="Select an experiment" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {modules.map((module) => (
                                             <SelectItem key={module.id} value={module.id}>
-                                                {`Module - ${module.unitNo} : ${module.title}`}
+                                                {`Experiment - ${module.unitNo} : ${module.title}`}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

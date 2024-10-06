@@ -148,6 +148,7 @@ router.post("/comp/:subId", async (req, res) => {
         }
 
         if (subject.admin != userId) {
+            console.log(subject.admin, " ", userId)
             return res.status(401).send({
                 success: false,
                 message: "Unauthorized Request",

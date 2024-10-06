@@ -17,7 +17,7 @@ const TutorialVideosComponent = lazy(() => import('@/components/subject/Tutorial
 const SyllabusUploadComponent = lazy(() => import('@/components/uploadPage/SyllabusUploadComponent'));
 const LessonPlanUploadComponent = lazy(() => import('@/components/uploadPage/LessonPlanUploadComponent'));
 const TheoryUploadComponent = lazy(() => import('@/components/uploadPage/TheoryUploadComponent'));
-// const LabsComponent = lazy(() => import('@/components/subject/LabsComponent'));
+const LabsUploadComponent = lazy(() => import('@/components/uploadPage/LabsUploadComponent'));
 // const AssignmentsComponent = lazy(() => import('@/components/subject/AssignmentsComponent'));
 // const ModelQPComponent = lazy(() => import('@/components/subject/ModelQPComponent'));
 // const TutorialVideosComponent = lazy(() => import('@/components/subject/TutorialVideosComponent'));
@@ -31,7 +31,7 @@ const DynamicSubjectComponent = () => {
         0: !auth.isAdmin ? SyllabusComponent : SyllabusUploadComponent,
         1: !auth.isAdmin ? LessonPlan : LessonPlanUploadComponent,
         2: !auth.isAdmin ? TheoryComponent : TheoryUploadComponent,
-        3: !auth.isAdmin ? LabsComponent : LabsComponent,
+        3: !auth.isAdmin ? LabsComponent : LabsUploadComponent,
         4: !auth.isAdmin ? AssignmentsComponent : AssignmentsComponent,
         5: !auth.isAdmin ? ModelQPComponent : ModelQPComponent,
         6: !auth.isAdmin ? TutorialVideosComponent : TutorialVideosComponent,

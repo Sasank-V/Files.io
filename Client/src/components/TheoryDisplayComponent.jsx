@@ -14,12 +14,11 @@ import {
 } from "@/components/ui/dialog"
 import { Download, FileText, Video, Presentation, Plus, X } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import axios, { axiosPrivate } from '@/api/axios'
+import axios from '@/api/axios'
 import { toast } from 'react-toastify'
 import useAuth from '@/hooks/useAuth'
-import uploadFile from '@/firebase/firebaseUtils'
 
-export default function TheoryDisplayComponent({ modules, subjectId }) {
+export default function TheoryDisplayComponent({ modules, setModules, subjectId, isTheory = true }) {
     const { auth } = useAuth();
     const [currentMaterials, setCurrentMaterials] = useState([])
     const [activeModule, setActiveModule] = useState(null)
@@ -27,8 +26,7 @@ export default function TheoryDisplayComponent({ modules, subjectId }) {
     const [newModule, setNewModule] = useState({
         title: '',
         unitNo: '',
-        description: '',
-        files: []
+        description: ''
     })
 
     useEffect(() => {
@@ -67,17 +65,12 @@ export default function TheoryDisplayComponent({ modules, subjectId }) {
 
     const handleCloseAddModule = () => {
         setIsAddModuleOpen(false)
-        setNewModule({ title: '', unitNo: '', description: '', files: [] })
+        setNewModule({ title: '', unitNo: '', description: '' })
     }
 
     const handleInputChange = (e) => {
         const { name, value } = e.target
         setNewModule(prev => ({ ...prev, [name]: value }))
-    }
-
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files)
-        setNewModule(prev => ({ ...prev, files }))
     }
 
     const handleSubmit = async (e) => {
@@ -88,36 +81,26 @@ export default function TheoryDisplayComponent({ modules, subjectId }) {
             return;
         }
 
-        const files = [];
-
-        for (let file of newModule.files) {
-            const fileUrl = uploadFile([file], subjectId, `components/0/${activeModule.id}`, file.name);
-
-            if (!fileUrl) {
-                toast.error("Error Uploading file", { position: 'top-right' });
-                return;
-            }
-
-            files.push({ name: file.name, url: fileUrl });
+        const addedModule = {
+            family: isTheory ? "0" : "1",
+            unitNo: newModule.unitNo,
+            title: newModule.title,
+            desc: newModule.description,
         }
 
-        console.log(files);
+        const res = await axios.post(`/admin/upload/comp/${subjectId}`, { access_token: auth.access_token, ...addedModule });
+        const data = res.data.data;
 
-        // const addedModule = {
-        //     family: "0",
-        //     unitNo: newModule.unitNo,
-        //     title: newModule.title,
-        //     desc: newModule.description,
-        //     files: newModule.files
-        // }
+        const nm = {
+            id: data._id,
+            title: data.title,
+            unitNo: data.no,
+            desc: data.desc
+        }
 
-        // console.log(addedModule);
+        setModules((prev) => ([...prev, nm]));
 
-        // const res = await axios.post(`/admin/upload/comp/${subjectId}`, { access_token: auth.access_token, ...addedModule });
-
-        // console.log(res);
-
-        // handleCloseAddModule()
+        handleCloseAddModule()
     }
 
     const getIcon = (materialType) => {
@@ -139,11 +122,10 @@ export default function TheoryDisplayComponent({ modules, subjectId }) {
                 {modules.map((module, index) => (
                     <Card
                         key={module.id}
-                        className={`cursor-pointer transition-all duration-200 overflow-hidden ${
-                            activeModule === module 
-                                ? 'ring-2 ring-[#fe965e]' 
-                                : 'hover:shadow-lg hover:scale-105'
-                        }`}
+                        className={`cursor-pointer transition-all duration-200 overflow-hidden ${activeModule === module
+                            ? 'ring-2 ring-[#fe965e]'
+                            : 'hover:shadow-lg hover:scale-105'
+                            }`}
                         onClick={() => handleModuleChange(module)}
                         style={{
                             background: `linear-gradient(135deg, 
@@ -152,25 +134,27 @@ export default function TheoryDisplayComponent({ modules, subjectId }) {
                         }}
                     >
                         <CardHeader>
-                            <CardTitle className="text-md font-bold text-white">Module - {module.unitNo}</CardTitle>
+                            <CardTitle className="text-md font-bold text-white">{isTheory ? "Module" : "Experiment"} - {module.unitNo}</CardTitle>
                             <CardTitle className="text-sm text-gray-300">{module.title}</CardTitle>
                         </CardHeader>
                     </Card>
                 ))}
                 <Dialog open={isAddModuleOpen} onOpenChange={setIsAddModuleOpen}>
-                    {auth.isAdmin && <DialogTrigger asChild>
-                        <Card
-                            className="cursor-pointer transition-all duration-200 hover:shadow-md flex items-center justify-center"
-                            onClick={handleAddModule}
-                        >
-                            <CardHeader>
-                                <CardTitle className="text-md font-bold flex items-center">
-                                    <Plus className="h-6 w-6 mr-2 text-[#fe965e]" />
-                                    Add Module
-                                </CardTitle>
-                            </CardHeader>
-                        </Card>
-                    </DialogTrigger>}
+                    {auth.isAdmin &&
+                        <DialogTrigger asChild>
+                            <Card
+                                className="cursor-pointer transition-all duration-200 hover:shadow-md flex items-center justify-center"
+                                onClick={handleAddModule}
+                            >
+                                <CardHeader>
+                                    <CardTitle className="text-md font-bold flex items-center">
+                                        <Plus className="h-6 w-6 mr-2 text-[#fe965e]" />
+                                        {isTheory ? "Add Module" : "Add Experiment"}
+                                    </CardTitle>
+                                </CardHeader>
+                            </Card>
+                        </DialogTrigger>
+                    }
                     <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                         <DialogHeader>
                             <DialogTitle className="text-2xl font-bold text-[#fe965e]">Add New Module</DialogTitle>
@@ -210,17 +194,6 @@ export default function TheoryDisplayComponent({ modules, subjectId }) {
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe965e] dark:border-gray-600 dark:bg-gray-700"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="files" className="text-sm font-medium text-gray-700 dark:text-gray-300">Upload Files</Label>
-                                <Input
-                                    id="files"
-                                    name="files"
-                                    type="file"
-                                    onChange={handleFileChange}
-                                    multiple
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe965e] dark:border-gray-600 dark:bg-gray-700"
-                                />
-                            </div>
                             <div className="flex justify-end space-x-2">
                                 <Button
                                     type="button"
@@ -247,7 +220,7 @@ export default function TheoryDisplayComponent({ modules, subjectId }) {
                 }}>
                     <CardHeader className="relative z-10">
                         <CardTitle className="text-xl text-[#fe965e]">{activeModule.title}</CardTitle>
-                        <CardDescription>Download materials for this unit</CardDescription>
+                        <CardDescription>Download materials for this {isTheory ? "module" : "experiment"}</CardDescription>
                     </CardHeader>
                     <CardContent className="relative z-10">
                         <div className="w-full overflow-auto bg-gray-800 bg-opacity-70 rounded-lg shadow-inner">

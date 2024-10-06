@@ -20,8 +20,8 @@ export default function Layout() {
   const zapRef = useRef(null)
 
   const handleLogout = async () => {
-    await logout()
-    navigate("/login")
+    logout();
+    navigate("/login");
   }
 
   useGSAP(() => {
@@ -110,13 +110,13 @@ export default function Layout() {
             {auth.access_token &&
               <Button variant="outline" className="bg-[rgb(255,161,98)] text-white border-0" onClick={handleLogout}>Logout</Button>
             }
-            <div 
+            <div
               className="ml-4 cursor-pointer"
               onMouseEnter={handleZapHover}
               onMouseLeave={handleZapLeave}
               aria-label="Quick action"
             >
-              <Zap 
+              <Zap
                 ref={zapRef}
                 className="h-8 w-8 text-[rgb(255,161,98)]"
               />
@@ -124,12 +124,11 @@ export default function Layout() {
           </div>
         </div>
       </header>
-      
+
       {/* Mobile Menu */}
       <div
-        className={`fixed inset-0 z-50 transform ${
-          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        } transition-transform duration-300 ease-in-out md:hidden`}
+        className={`fixed inset-0 z-50 transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          } transition-transform duration-300 ease-in-out md:hidden`}
       >
         <div className="fixed inset-0 bg-black bg-opacity-25" onClick={() => setIsMenuOpen(false)}></div>
         <nav className="relative flex flex-col h-full w-64 max-w-sm py-6 px-6 bg-white shadow-xl overflow-y-auto">

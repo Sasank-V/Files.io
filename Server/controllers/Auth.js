@@ -13,6 +13,26 @@ import Query from "../models/queries.js";
 
 dotenv.config()
 
+router.get("/details/:id", async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const foundUser = await User.findOne({ _id: id });
+
+        if (!foundUser) {
+            return res.status(404).send({ message: "User not found" });
+        }
+
+        return res.status(200).send({
+            id: foundUser._id,
+            name: foundUser.username,
+            email: foundUser.email,
+        });
+    } catch (error) {
+        return res.status(500).send({ message: "Server error", error });
+    }
+});
+
 //Format
 //{username : "" , password : "" , email : ""}
 router.post("/signup", async (req, res) => {
@@ -92,30 +112,37 @@ router.post("/login", async (req, res) => {
         success: true,
         message: "Successfully logged in",
         access_token: access_token,
-        isAdmin: user.isAdmin
+        isAdmin: user.isAdmin,
+        username: user.username
     });
 });
 
 
 
 router.get("/logout", async (req, res) => {
-    const cookies = req.cookies;
+    try {
+        const cookies = req.cookies;
 
-    if (!cookies?.jwt) {
-        return res.sendStatus(204);
-    }
+        if (!cookies?.jwt) {
+            return res.sendStatus(204);
+        }
 
-    const refresh_token = cookies.jwt;
+        const refresh_token = cookies.jwt;
 
-    const foundUser = await User.findOne({ refresh_token: refresh_token });
-    if (!foundUser) {
+        const foundUser = await User.findOne({ refresh_token: refresh_token });
+        if (!foundUser) {
+            res.clearCookie('jwt', { httpOnly: true });
+            return res.sendStatus(204);
+        }
+
+        await User.updateOne({ _id: foundUser._id }, { refresh_token: '' });
         res.clearCookie('jwt', { httpOnly: true });
-        return res.sendStatus(204);
+        res.sendStatus(204);
+    } catch (err) {
+        return res.status(309).send({
+            error: err,
+        })
     }
-
-    await User.updateOne({ _id: foundUser._id }, { refresh_token: '' });
-    res.clearCookie('jwt', { httpOnly: true });
-    res.sendStatus(204);
 });
 
 

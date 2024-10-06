@@ -27,6 +27,7 @@ const verifyJWT = (req, res, next) => {
         token,
         process.env.JWTSECRET_KEY,
         (err, decoded) => {
+            console.log(err, decoded)
             if (err) {
                 return res.sendStatus(403);
             }
@@ -51,9 +52,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api/auth", authRouter);
 app.use("/api/refresh", refreshRouter)
 app.use("/api/learn", learnRouter);
+app.use("/api/auth", authRouter);
 app.use(verifyJWT);
 app.use("/api/query", queryRouter);
 app.use("/api/admin", adminRouter);

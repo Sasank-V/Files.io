@@ -1,4 +1,4 @@
-import { useState,useEffect,useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -22,7 +22,7 @@ const LoginPage = () => {
     const svgRef = useRef(null);
 
     useEffect(() => {
-        const svg = svgRef.current;    
+        const svg = svgRef.current;
         gsap.to(svg, {
             scale: 1,
             rotation: 0,
@@ -52,9 +52,9 @@ const LoginPage = () => {
                 'Content-Type': 'application/json',
             },
         }).then((res) => {
-            const { access_token, isAdmin, message } = res.data;
+            const { access_token, isAdmin, message, username } = res.data;
 
-            setAuth({ isAdmin, access_token });
+            setAuth({ isAdmin, access_token, username });
 
             console.log(message)
 

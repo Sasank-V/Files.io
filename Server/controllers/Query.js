@@ -8,29 +8,6 @@ import Query from "../models/queries.js";
 
 //Route - /api/query
 
-
-router.get("/me", async (req, res) => {
-    const cookies = req.cookies;
-
-    if (!cookies?.jwt) {
-        return res.sendStatus(204);
-    }
-
-    const refresh_token = cookies.jwt;
-
-    const foundUser = await User.findOne({ refresh_token: refresh_token });
-    if (!foundUser) {
-        res.clearCookie('jwt', { httpOnly: true });
-        return res.sendStatus(204);
-    }
-
-    return res.status(201).send({
-        id: foundUser._id,
-        name: foundUser.username,
-        email: foundUser.email,
-    })
-});
-
 //Get all users Queries
 //id - userId 
 router.get("/all/:id", async (req, res) => {

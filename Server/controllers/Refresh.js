@@ -39,7 +39,7 @@ router.get("/", async (req, res) => {
                 { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
             );
 
-            const data = { access_token: access_token, isAdmin: foundUser.isAdmin }
+            const data = { access_token: access_token, isAdmin: foundUser.isAdmin, username: foundUser.username }
             console.log(data)
 
             res.status(201).json(data);

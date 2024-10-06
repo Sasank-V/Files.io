@@ -59,13 +59,17 @@ export default function TheoryUploadComponent({ subjectId }) {
 
         try {
             const response = await axios.post(`/admin/upload/module/${subjectId}/${selectedModule}`, { access_token: auth.access_token, files: [{ name: materialName, url: fileUrl }] });
+
+            console.log(response);
             setDoneUpload(true);
+
             setSelectedModule('')
             setSelectedFile(null)
 
             fetchModules();
         } catch (error) {
-            console.error('Error uploading materiak:', error)
+            toast.error("Error uploading material", { position: 'top-right' });
+            console.error('Error uploading material:', error)
         }finally{
             setDoneUpload(true);
         }
@@ -73,7 +77,7 @@ export default function TheoryUploadComponent({ subjectId }) {
 
     return (
         <div className="space-y-6">
-            <TheoryDisplayComponent modules={modules} />
+            <TheoryDisplayComponent modules={modules} subjectId={subjectId} />
 
             <Card>
                 <CardHeader>

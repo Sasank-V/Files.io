@@ -81,7 +81,6 @@ const SyllabusUploadComponent = ({ subjectId }) => {
                             id="syllabus-file"
                             type="file"
                             accept=".pdf,.pptx"
-                            multiple
                             onChange={handleFileChange}
                             className="file:mr-4 h-max py-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fe965e] file:text-white hover:file:bg-[#e8854e]"
                         />

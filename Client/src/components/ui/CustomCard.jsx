@@ -13,7 +13,7 @@ const CustomCard = ({ subjectData }) => {
     const overlayRef = useRef(null);
     const arrowRef = useRef(null);
 
-    const [onCard,setOnCard] = useState(false);
+    const [onCard, setOnCard] = useState(false);
 
     const queryParams = new URLSearchParams({
         id: subjectData.id,
@@ -57,21 +57,21 @@ const CustomCard = ({ subjectData }) => {
                 ref={cardRef}
                 to={`/subject/0?${queryParams}`}
                 className="relative h-[300px] w-[300px] rounded-3xl overflow-hidden shadow-xl cursor-pointer transition-all duration-300 hover:shadow-2xl"
-                onPointerEnter={()=>setOnCard(true)}
+                onPointerEnter={() => setOnCard(true)}
             >
                 <div className='h-full overflow-hidden'>
-                    <img 
+                    <img
                         ref={imageRef}
-                        src={IMG} 
-                        alt={subjectData.name} 
-                        className='w-full h-full object-cover transition-transform duration-300 brightness-75' 
+                        src={IMG}
+                        alt={subjectData.name}
+                        className='w-full h-full object-cover transition-transform duration-300 brightness-75'
                     />
                 </div>
-                <div 
+                <div
                     ref={overlayRef}
                     className='absolute inset-0 bg-gradient-to-t from-[#000000] to-transparent opacity-90'
                 ></div>
-                <div 
+                <div
                     ref={contentRef}
                     className='absolute bottom-0 left-0 right-0 p-6 text-white z-20 transition-transform duration-300'
                 >

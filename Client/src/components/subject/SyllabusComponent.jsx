@@ -3,9 +3,11 @@ import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import axios from '@/api/axios'
+import SyllabusLessonViewComponent from '../SyllabusLessonViewComponent'
 
 const SyllabusComponent = ({ subjectId }) => {
     const [subject, setSubject] = useState({});
+    const [currentSyllabus, setCurrentSyllabus] = useState({ filename: "", url: "" });
 
     useEffect(() => {
         const fetchSubjectDetails = async () => {
@@ -15,32 +17,21 @@ const SyllabusComponent = ({ subjectId }) => {
             setSubject(data.data);
         }
 
+        const fetchSyllabusDetails = async () => {
+            const res = await axios.get(`/learn/syll/${subjectId}`);
+            const syllabus = res.data.data;
+
+            setCurrentSyllabus((prev) => ({ ...prev, filename: syllabus?.name, url: syllabus?.url }));
+
+            console.log(res);
+        }
+
         fetchSubjectDetails();
+        fetchSyllabusDetails();
     }, [])
 
-    const handleDownload = () => {
-        console.log(`Downloading ${subject.name} syllabus PDF`)
-    }
-
     return (
-        <Card className="w-full max-w-3xl mx-auto">
-            <CardHeader>
-                <div className="flex justify-between items-center">
-                    <div>
-                        <CardTitle className="text-2xl font-bold text-[#fe965e]">Syllabus</CardTitle>
-                        <CardDescription className="mt-1">Download the complete syllabus for {subject.name}</CardDescription>
-                    </div>
-                </div>
-            </CardHeader>
-            <CardContent className="flex justify-center">
-                <Button
-                    onClick={handleDownload}
-                    className="bg-[#fe965e] hover:bg-[#e8854e] text-white rounded-full px-6 py-3 text-lg"
-                >
-                    <Download className="mr-2 h-5 w-5" /> Download Syllabus PDF
-                </Button>
-            </CardContent>
-        </Card>
+        <SyllabusLessonViewComponent subject={subject} current={currentSyllabus} />
     )
 }
 

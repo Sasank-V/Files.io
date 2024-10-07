@@ -7,15 +7,18 @@ import { Label } from '@/components/ui/label'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import gsap from 'gsap'
+import LoadingComponent from '@/components/loading'
 
 const SignupPage = () => {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [username,setUserName] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [donePost,setDonePost] = useState(true);
 
     const svgRef = useRef(null);
 
@@ -39,13 +42,13 @@ const SignupPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setDonePost(false);
         if (password !== confirmPassword) {
             toast.error("Passwords do not match", { position: 'top-right' });
             return;
         }
 
-        const user = { email, password };
+        const user = { username , email, password };
 
         const url = `${import.meta.env.VITE_REACT_API_URL}/auth/signup`;
 
@@ -60,6 +63,7 @@ const SignupPage = () => {
             console.log(message)
 
             toast.success(message, { position: 'top-right' });
+            setDonePost(true);
 
             navigate('/login');
         }).catch((error) => {
@@ -82,6 +86,7 @@ const SignupPage = () => {
     return (
         <main className='flex w-full h-full overflow-y-scroll'>
             <div className="md:w-[50%] w-full p-10">
+                {!donePost ? <LoadingComponent text="Creating User"/> :
                 <div className="w-full h-full flex flex-col p-10 justify-center items-center">
                     <div className="md:text-[60px] text-[30px] font-semibold justify-start text-center">
                         Create Account
@@ -91,6 +96,18 @@ const SignupPage = () => {
                     </div>
                     <form onSubmit={handleSubmit} className='w-full max-w-[400px] mt-10'>
                         <div className='space-y-4'>
+                            <div className='space-y-2'>
+                                <Label htmlFor="email">Username</Label>
+                                <Input
+                                    id="username"
+                                    type="text"
+                                    placeholder="Enter your username"
+                                    value={username}
+                                    onChange={(e) => setUserName(e.target.value)}
+                                    required
+                                    className="w-full bg-white px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#fe965e]"
+                                />
+                            </div>
                             <div className='space-y-2'>
                                 <Label htmlFor="email">Email</Label>
                                 <Input
@@ -168,7 +185,7 @@ const SignupPage = () => {
                             Log In
                         </Link>
                     </div>
-                </div>
+                </div>}
             </div>
             <div className='md:flex hidden w-[50%] justify-center h-[95vh]'>
                 <div className='w-[60%] h-[90%] rounded-b-full bg-[#f9d9c6] flex items-center justify-center'>

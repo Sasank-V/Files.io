@@ -10,6 +10,7 @@ export const userSchema = Joi.object({
 export const querySchema = Joi.object({
     to : Joi.string().required(),
     ques : Joi.string().required(),
+    type: Joi.number().required()
 });
 
 export const subjectSchema = Joi.object({

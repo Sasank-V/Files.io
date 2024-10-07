@@ -161,7 +161,7 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
                             </Card>
                         </DialogTrigger>
                     }
-                    <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                    <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-vssemibold">
                         <DialogHeader>
                             <DialogTitle className="text-2xl font-bold text-[#fe965e]">Add New Module</DialogTitle>
                         </DialogHeader>

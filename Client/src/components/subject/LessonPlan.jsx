@@ -1,6 +1,3 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Download } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import axios from '@/api/axios'
 import SyllabusLessonViewComponent from '../SyllabusLessonViewComponent'

@@ -10,6 +10,7 @@ import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import useAuth from '@/hooks/useAuth'
 import SyllabusLessonViewComponent from '@/components/SyllabusLessonViewComponent'
 import LoadingComponent from '../loading'
+import { toast } from 'react-toastify'
 
 const LessonPlanUploadComponent = ({ subjectId }) => {
     const [file, setFile] = useState(null)
@@ -18,6 +19,7 @@ const LessonPlanUploadComponent = ({ subjectId }) => {
     const axiosPrivate = useAxiosPrivate();
     const { auth } = useAuth();
     const [doneUpload, setDoneUpload] = useState(true);
+    const [subjectAdmin, setSubjectAdmin] = useState("");
 
     useEffect(() => {
         const fetchSubjectDetails = async () => {
@@ -40,6 +42,17 @@ const LessonPlanUploadComponent = ({ subjectId }) => {
         fetchLessonPlanDetails();
     }, []);
 
+    useEffect(() => {
+        const fetchSubjectAdminDetails = async () => {
+            const res = await axiosPrivate.get(`/auth/details/${subject.admin}`);
+
+            const data = res.data;
+            setSubjectAdmin(data.name);
+        }
+
+        fetchSubjectAdminDetails();
+    }, [subject])
+
 
     const handleFileChange = (e) => {
         if (e.target.files) {
@@ -49,6 +62,11 @@ const LessonPlanUploadComponent = ({ subjectId }) => {
     }
 
     const handleUpload = async () => {
+        if (subjectAdmin !== auth.username) {
+            toast.error("Unauthorised Request", { position: 'top-right' });
+            return;
+        }
+
         const fileName = subject.name + "_LessonPlan.pdf";
         setDoneUpload(false);
         const url = await uploadFile(file, subjectId, "lessonPlan", fileName);

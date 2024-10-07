@@ -46,7 +46,7 @@ export default function LabsUploadComponent({ subjectId }) {
         e.preventDefault()
 
         if (!selectedModule || !materialName) {
-            alert('Please fill in all fields and select at least one file.')
+            toast('Please fill in all fields and select at least one file.', { position: 'top-right' })
             return
         }
         setDoneUpload(false);
@@ -69,7 +69,11 @@ export default function LabsUploadComponent({ subjectId }) {
             fetchModules();
         } catch (error) {
             toast.error("Error uploading material", { position: 'top-right' });
-            console.error('Error uploading material:', error)
+            const baseUrl = ""
+            const path = decodeURIComponent(fileUrl.split(baseUrl)[1].split("?")[0]);
+            console.log(path);
+
+            // console.error('Error uploading material:', error)
         } finally {
             setDoneUpload(true);
         }

@@ -15,8 +15,8 @@ import {
 import { Download, FileText, Video, Presentation, Plus, X } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import axios from '@/api/axios'
-import { toast } from 'react-toastify'
 import useAuth from '@/hooks/useAuth'
+import { toast } from 'react-toastify'
 
 export default function TheoryDisplayComponent({ modules, setModules, subjectId, isTheory = true }) {
     const { auth } = useAuth();
@@ -88,19 +88,25 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
             desc: newModule.description,
         }
 
-        const res = await axios.post(`/admin/upload/comp/${subjectId}`, { access_token: auth.access_token, ...addedModule });
-        const data = res.data.data;
+        try {
+            const res = await axios.post(`/admin/upload/comp/${subjectId}`, { access_token: auth.access_token, ...addedModule });
 
-        const nm = {
-            id: data._id,
-            title: data.title,
-            unitNo: data.no,
-            desc: data.desc
+            const data = res.data.data;
+
+            const nm = {
+                id: data._id,
+                title: data.title,
+                unitNo: data.no,
+                desc: data.desc
+            }
+
+            setModules((prev) => ([...prev, nm]));
+
+            handleCloseAddModule();
+        } catch (err) {
+            toast.error("Unauthorized Request", { position: 'top-right' });
+            console.log(err)
         }
-
-        setModules((prev) => ([...prev, nm]));
-
-        handleCloseAddModule()
     }
 
     const getIcon = (materialType) => {
@@ -241,14 +247,16 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="text-gray-300 hover:text-[#fe965e] hover:bg-[#fe965e]/10"
-                                                >
-                                                    <Download className="h-4 w-4 mr-2" />
-                                                    <a href={material.url}>Download</a>
-                                                </Button>
+                                                <a href={material.url}>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-gray-300 hover:text-[#fe965e] hover:bg-[#fe965e]/10"
+                                                    >
+                                                        <Download className="h-4 w-4 mr-2" />
+                                                        Download
+                                                    </Button>
+                                                </a>
                                             </TableCell>
                                         </TableRow>
                                     ))}

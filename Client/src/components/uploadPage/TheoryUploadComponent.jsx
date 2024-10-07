@@ -61,8 +61,6 @@ export default function TheoryUploadComponent({ subjectId }) {
             const response = await axiosPrivate.post(`/admin/upload/module/${subjectId}/${selectedModule}`, { access_token: auth.access_token, files: [{ name: materialName, url: fileUrl }] });
 
             console.log(response);
-            setDoneUpload(true);
-
             setSelectedModule('')
             setSelectedFile(null)
 

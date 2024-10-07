@@ -270,10 +270,13 @@ router.post("/modelQP/:subId", async (req, res) => {
             })
         }
 
+        let name;
+
         // Save all files in parallel
         const materialPromises = files.map(async (file) => {
+            name = `${subject.name}_PYQ_${file.name}`;
             const newMaterial = new Material({
-                name: `${subject.name}_PYQ_${file.name}`,
+                name: name,
                 url: file.url,
             });
             return await newMaterial.save();
@@ -281,12 +284,13 @@ router.post("/modelQP/:subId", async (req, res) => {
 
         const savedMaterials = await Promise.all(materialPromises);
 
-        subject.moduleQp = savedMaterials.map((mat) => (mat._id));
+        subject.moduleQp = [...subject.moduleQp, savedMaterials.map((mat) => (mat._id))];
         await subject.save();
 
         return res.status(200).send({
             success: true,
             message: "Model Question Papers saved successfully",
+            name: name
         });
 
     } catch (err) {
@@ -330,7 +334,7 @@ router.post("/refs/:subId", async (req, res) => {
             })
         }
 
-        subject.refs = data.refs;
+        subject.refs = [...subject.refs, ...data.refs];
         await subject.save();
         return res.status(200).send({
             success: true,

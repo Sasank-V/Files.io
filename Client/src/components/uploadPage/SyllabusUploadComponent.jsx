@@ -10,6 +10,7 @@ import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import useAuth from '@/hooks/useAuth'
 import SyllabusLessonViewComponent from '@/components/SyllabusLessonViewComponent'
 import LoadingComponent from '../loading'
+import { toast } from 'react-toastify'
 
 const SyllabusUploadComponent = ({ subjectId }) => {
     const [file, setFile] = useState(null)
@@ -17,7 +18,8 @@ const SyllabusUploadComponent = ({ subjectId }) => {
     const [currentSyllabus, setCurrentSyllabus] = useState({ filename: "", url: "" });
     const axiosPrivate = useAxiosPrivate();
     const { auth } = useAuth();
-    const [doneUpload,setDoneUpload] = useState(true);
+    const [doneUpload, setDoneUpload] = useState(true);
+    const [subjectAdmin, setSubjectAdmin] = useState("");
 
     useEffect(() => {
         const fetchSubjectDetails = async () => {
@@ -40,6 +42,17 @@ const SyllabusUploadComponent = ({ subjectId }) => {
         fetchSyllabusDetails();
     }, []);
 
+    useEffect(() => {
+        const fetchSubjectAdminDetails = async () => {
+            const res = await axiosPrivate.get(`/auth/details/${subject.admin}`);
+
+            const data = res.data;
+            setSubjectAdmin(data.name);
+        }
+
+        fetchSubjectAdminDetails();
+    }, [subject])
+
 
     const handleFileChange = (e) => {
         if (e.target.files) {
@@ -49,6 +62,11 @@ const SyllabusUploadComponent = ({ subjectId }) => {
     }
 
     const handleUpload = async () => {
+        if (subjectAdmin !== auth.username) {
+            toast.error("Unauthorised Request", { position: 'top-right' });
+            return;
+        }
+
         const fileName = subject.name + "_Syllabus.pdf";
         setDoneUpload(false);
         const url = await uploadFile(file, subjectId, "syllabus", fileName);
@@ -77,28 +95,28 @@ const SyllabusUploadComponent = ({ subjectId }) => {
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {!doneUpload ? <LoadingComponent text="Uploading"/> : <>
-                    <div className="space-y-2">
-                        <Label htmlFor="syllabus-file" className="text-sm font-medium text-gray-700">
-                            Select Syllabus PDF
-                        </Label>
-                        <Input
-                            id="syllabus-file"
-                            type="file"
-                            accept=".pdf,.pptx"
-                            onChange={handleFileChange}
-                            className="file:mr-4 h-max py-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fe965e] file:text-white hover:file:bg-[#e8854e]"
-                        />
-                    </div>
-                    <div className="flex justify-center">
-                        <Button
-                            onClick={handleUpload}
-                            disabled={!file}
-                            className="bg-[#fe965e] hover:bg-[#e8854e] text-white rounded-full px-6 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <Upload className="mr-2 h-5 w-5" /> Upload Syllabus PDF
-                        </Button>
-                    </div>
+                    {!doneUpload ? <LoadingComponent text="Uploading" /> : <>
+                        <div className="space-y-2">
+                            <Label htmlFor="syllabus-file" className="text-sm font-medium text-gray-700">
+                                Select Syllabus PDF
+                            </Label>
+                            <Input
+                                id="syllabus-file"
+                                type="file"
+                                accept=".pdf,.pptx"
+                                onChange={handleFileChange}
+                                className="file:mr-4 h-max py-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#fe965e] file:text-white hover:file:bg-[#e8854e]"
+                            />
+                        </div>
+                        <div className="flex justify-center">
+                            <Button
+                                onClick={handleUpload}
+                                disabled={!file}
+                                className="bg-[#fe965e] hover:bg-[#e8854e] text-white rounded-full px-6 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <Upload className="mr-2 h-5 w-5" /> Upload Syllabus PDF
+                            </Button>
+                        </div>
                     </>}
                 </CardContent>
             </Card>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from '@/api/axios'
 import TheoryDisplayComponent from '../TheoryDisplayComponent'
+import NoComponentsCard from '../NoComponentsCard'
 
 const LabsComponent = ({ subjectId }) => {
     // const [subject, setSubject] = useState({});
@@ -24,7 +25,11 @@ const LabsComponent = ({ subjectId }) => {
 
     return (
         <div className="space-y-6">
-            <TheoryDisplayComponent modules={modules} isTheory={false} />
+            {
+                modules.length > 0
+                    ? <TheoryDisplayComponent modules={modules} isTheory={false} />
+                    : <NoComponentsCard text="Experiments" />
+            }
         </div>
     )
 }

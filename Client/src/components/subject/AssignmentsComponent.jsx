@@ -172,7 +172,7 @@ export default function AssignmentsComponent({ subjectId }) {
         }
     }
 
-    if (currentMaterials.length === 0) {
+    if (assignments.length === 0 && !auth.isAdmin) {
         return (
             <NoComponentsCard text="Assignments" />
         )

@@ -116,7 +116,7 @@ export default function ModelQPComponent({ subjectId }) {
         )
     }
 
-    if (modelQPs.length === 0) {
+    if (modelQPs.length === 0 && !auth.isAdmin) {
         return (
             <NoComponentsCard text="Model Question Papers" />
         )

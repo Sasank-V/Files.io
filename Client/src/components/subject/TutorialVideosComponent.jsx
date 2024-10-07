@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from "@/components/ui/button"
@@ -7,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Video, ExternalLink, Plus } from 'lucide-react'
-import { useState, useEffect } from 'react'
 import axios from '@/api/axios'
 import useAuth from '@/hooks/useAuth'
 import { toast } from 'react-toastify'
@@ -19,35 +19,29 @@ export default function TutorialVideosComponent({ subjectId }) {
     const [newVideo, setNewVideo] = useState("");
 
     useEffect(() => {
-        const fetchVidoes = async () => {
+        const fetchVideos = async () => {
             try {
                 const res = await axios.get(`/learn/refs/${subjectId}`, { access_token: auth.access_token });
-                console.log(res);
                 setVideos(res.data.data)
             } catch (error) {
                 console.error('Error fetching subject details:', error)
+                toast.error("Failed to fetch videos", { position: 'top-right' })
             }
         }
 
-        fetchVidoes()
-    }, [subjectId])
-
-    const handleWatchVideo = (videoId) => {
-        console.log(`Redirecting to video ${videoId} for`)
-        // Implement your redirection logic here
-    }
+        fetchVideos()
+    }, [subjectId, auth.access_token])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
         if (!newVideo) {
-            toast.error("All fields are required", { position: 'top-right' })
+            toast.error("Video URL is required", { position: 'top-right' })
             return
         }
 
         try {
-            const response = await axios.post(`/admin/upload/refs/${subjectId}`, { access_token: auth.access_token, refs: [newVideo] });
-
+            await axios.post(`/admin/upload/refs/${subjectId}`, { access_token: auth.access_token, refs: [newVideo] });
             setVideos(prev => [...prev, newVideo])
             toast.success("Video added successfully", { position: 'top-right' })
             setIsAddVideoOpen(false)
@@ -59,39 +53,46 @@ export default function TutorialVideosComponent({ subjectId }) {
     }
 
     return (
-        <Card className="w-full">
-            <CardHeader className="flex flex-row items-center justify-between">
+        <Card className="w-full overflow-hidden" style={{
+            background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1A1A1A 100%)'
+        }}>
+            <CardHeader className="flex flex-row items-center justify-between border-b border-gray-700">
                 <div>
-                    <CardTitle className="text-2xl font-bold text-primary">Tutorial Videos</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-[#fe965e]">Tutorial Videos</CardTitle>
+                    <CardDescription className="text-gray-400">Watch tutorial videos for this subject</CardDescription>
                 </div>
                 {auth.isAdmin && (
                     <Dialog open={isAddVideoOpen} onOpenChange={setIsAddVideoOpen}>
                         <DialogTrigger asChild>
-                            <Button variant="outline" className="ml-auto">
+                            <Button variant="outline" className="bg-[#fe965e] hover:bg-[#e8854e] text-white">
                                 <Plus className="h-4 w-4 mr-2" />
                                 Add Video
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
+                        <DialogContent className="sm:max-w-[425px] bg-gray-800 text-white">
                             <DialogHeader>
-                                <DialogTitle className="text-2xl font-bold text-primary">Add New Video</DialogTitle>
+                                <DialogTitle className="text-2xl font-bold text-[#fe965e]">Add New Video</DialogTitle>
                             </DialogHeader>
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="url">Video URL</Label>
+                                    <Label htmlFor="url" className="text-gray-300">Video URL</Label>
                                     <Input
                                         id="url"
                                         name="url"
-                                        value={newVideo.url}
+                                        value={newVideo}
                                         onChange={(e) => setNewVideo(e.target.value)}
                                         required
+                                        className="bg-gray-700 text-white border-gray-600"
                                     />
                                 </div>
                                 <div className="flex justify-end space-x-2">
-                                    <Button type="button" variant="outline" onClick={() => setIsAddVideoOpen(false)}>
+                                    <Button type="button" variant="outline" onClick={() => setIsAddVideoOpen(false)}
+                                        className="bg-gray-700 text-white hover:bg-gray-600">
                                         Cancel
                                     </Button>
-                                    <Button type="submit">Add Video</Button>
+                                    <Button type="submit" className="bg-[#fe965e] hover:bg-[#e8854e] text-white">
+                                        Add Video
+                                    </Button>
                                 </div>
                             </form>
                         </DialogContent>
@@ -99,40 +100,42 @@ export default function TutorialVideosComponent({ subjectId }) {
                 )}
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Title</TableHead>
-                            <TableHead>Video Link</TableHead>
-                            <TableHead className="text-right">Action</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {videos.map((video, i) => (
-                            <TableRow key={i}>
-                                <TableCell className="font-medium">Video - {i + 1}</TableCell>
-                                <TableCell>
-                                    <div className="flex items-center">
-                                        <Video className="mr-2 h-4 w-4 text-muted-foreground" />
-                                        {video}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <a href={video}>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="hover:text-primary"
-                                        >
-                                            <ExternalLink className="mr-2 h-4 w-4" />
-                                            Watch
-                                        </Button>
-                                    </a>
-                                </TableCell>
+                <div className="w-full overflow-auto bg-gray-800 bg-opacity-70 rounded-lg shadow-inner">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="text-gray-300">Title</TableHead>
+                                <TableHead className="text-gray-300">Video Link</TableHead>
+                                <TableHead className="text-right text-gray-300">Action</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {videos.map((video, i) => (
+                                <TableRow key={i} className="border-b border-gray-700">
+                                    <TableCell className="font-medium text-gray-200">Video - {i + 1}</TableCell>
+                                    <TableCell className="text-gray-300">
+                                        <div className="flex items-center">
+                                            <Video className="mr-2 h-4 w-4 text-[#fe965e]" />
+                                            {video}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <a href={video} target="_blank" rel="noopener noreferrer">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="hover:text-[#fe965e] text-gray-300"
+                                            >
+                                                <ExternalLink className="mr-2 h-4 w-4" />
+                                                Watch
+                                            </Button>
+                                        </a>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </CardContent>
         </Card>
     )

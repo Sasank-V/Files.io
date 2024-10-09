@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Video, ExternalLink, Plus } from 'lucide-react'
+import { Video, ExternalLink, Plus, Trash2 } from 'lucide-react'
 import axios from '@/api/axios'
 import useAuth from '@/hooks/useAuth'
 import { toast } from 'react-toastify'
@@ -49,6 +49,21 @@ export default function TutorialVideosComponent({ subjectId }) {
         } catch (err) {
             toast.error("Failed to add video", { position: 'top-right' })
             console.error(err)
+        }
+    }
+
+    const handleDeleteVideo = async (videoUrl) => {
+        if (window.confirm("Are you sure you want to delete this video? This action cannot be undone.")) {
+            try {
+                await axios.delete(`/admin/delete/refs/${subjectId}`, {
+                    data: { access_token: auth.access_token, ref: videoUrl }
+                });
+                setVideos(videos.filter(video => video !== videoUrl));
+                toast.success("Video deleted successfully", { position: 'top-right' });
+            } catch (error) {
+                console.error('Error deleting video:', error);
+                toast.error("Failed to delete video", { position: 'top-right' });
+            }
         }
     }
 
@@ -120,16 +135,29 @@ export default function TutorialVideosComponent({ subjectId }) {
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <a href={video} target="_blank" rel="noopener noreferrer">
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="hover:text-[#fe965e] text-gray-300"
-                                            >
-                                                <ExternalLink className="mr-2 h-4 w-4" />
-                                                Watch
-                                            </Button>
-                                        </a>
+                                        <div className="flex justify-end space-x-2">
+                                            <a href={video} target="_blank" rel="noopener noreferrer">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="hover:text-[#fe965e] text-gray-300"
+                                                >
+                                                    <ExternalLink className="mr-2 h-4 w-4" />
+                                                    Watch
+                                                </Button>
+                                            </a>
+                                            {auth.isAdmin && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="hover:text-red-500 text-gray-300"
+                                                    onClick={() => handleDeleteVideo(video)}
+                                                >
+                                                    <Trash2 className="mr-2 h-4 w-4" />
+                                                    Delete
+                                                </Button>
+                                            )}
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}

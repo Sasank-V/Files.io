@@ -1,5 +1,4 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,7 +11,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Download, FileText, Video, Presentation, Plus, X } from 'lucide-react'
+import { Download, FileText, Video, Presentation, Plus, X, Trash2 } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import axios from '@/api/axios'
 import useAuth from '@/hooks/useAuth'
@@ -31,18 +30,20 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
 
     useEffect(() => {
         const func = async () => {
-            try {
-                const res = await axios.get(`learn/module/get/${activeModule.id}`)
-                const data = res.data.data.mats;
-                setCurrentMaterials(data);
-                console.log(data);
-            } catch (error) {
-                console.error('Error fetching module materials:', error)
+            if (activeModule) {
+                try {
+                    const res = await axios.get(`learn/module/get/${activeModule.id}`)
+                    const data = res.data.data.mats;
+                    setCurrentMaterials(data);
+                    console.log(data);
+                } catch (error) {
+                    console.error('Error fetching module materials:', error)
+                }
             }
         }
 
         func();
-    }, [modules])
+    }, [modules, activeModule])
 
     const handleModuleChange = async (module) => {
         setActiveModule(module)
@@ -103,9 +104,29 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
             setModules((prev) => ([...prev, nm]));
 
             handleCloseAddModule();
+            toast.success(`${isTheory ? "Module" : "Experiment"} added successfully`, { position: 'top-right' });
         } catch (err) {
             toast.error("Unauthorized Request", { position: 'top-right' });
             console.log(err)
+        }
+    }
+
+    const handleDeleteModule = async (moduleId) => {
+        if (window.confirm(`Are you sure you want to delete this ${isTheory ? "module" : "experiment"}? This action cannot be undone.`)) {
+            try {
+                await axios.delete(`/admin/delete/module/${subjectId}/${moduleId}`, {
+                    data: { access_token: auth.access_token }
+                });
+                setModules(modules.filter(module => module.id !== moduleId));
+                if (activeModule && activeModule.id === moduleId) {
+                    setActiveModule(null);
+                    setCurrentMaterials([]);
+                }
+                toast.success(`${isTheory ? "Module" : "Experiment"} deleted successfully`, { position: 'top-right' });
+            } catch (error) {
+                console.error(`Error deleting ${isTheory ? "module" : "experiment"}:`, error);
+                toast.error(`Failed to delete ${isTheory ? "module" : "experiment"}`, { position: 'top-right' });
+            }
         }
     }
 
@@ -143,6 +164,22 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
                             <CardTitle className="text-md font-bold text-white">{isTheory ? "Module" : "Experiment"} - {module.unitNo}</CardTitle>
                             <CardTitle className="text-sm text-gray-300">{module.title}</CardTitle>
                         </CardHeader>
+                        {auth.isAdmin && (
+                            <CardContent>
+                                <Button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteModule(module.id);
+                                    }}
+                                    variant="destructive"
+                                    size="sm"
+                                    className="mt-2 bg-red-500 hover:bg-red-600 text-white"
+                                >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete
+                                </Button>
+                            </CardContent>
+                        )}
                     </Card>
                 ))}
                 <Dialog open={isAddModuleOpen} onOpenChange={setIsAddModuleOpen}>
@@ -163,11 +200,11 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
                     }
                     <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-vssemibold">
                         <DialogHeader>
-                            <DialogTitle className="text-2xl font-bold text-[#fe965e]">Add New Module</DialogTitle>
+                            <DialogTitle className="text-2xl font-bold text-[#fe965e]">Add New {isTheory ? "Module" : "Experiment"}</DialogTitle>
                         </DialogHeader>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-300">Module Title</Label>
+                                <Label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-300">{isTheory ? "Module" : "Experiment"} Title</Label>
                                 <Input
                                     id="title"
                                     name="title"
@@ -178,7 +215,7 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="unitNo" className="text-sm font-medium text-gray-700 dark:text-gray-300">Module Number</Label>
+                                <Label htmlFor="unitNo" className="text-sm font-medium text-gray-700 dark:text-gray-300">{isTheory ? "Module" : "Experiment"} Number</Label>
                                 <Input
                                     id="unitNo"
                                     name="unitNo"
@@ -190,7 +227,7 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="description" className="text-sm font-medium text-gray-700 dark:text-gray-300">Module Description</Label>
+                                <Label htmlFor="description" className="text-sm font-medium text-gray-700 dark:text-gray-300">{isTheory ? "Module" : "Experiment"} Description</Label>
                                 <Textarea
                                     id="description"
                                     name="description"
@@ -213,13 +250,13 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
                                     type="submit"
                                     className="px-4 py-2 text-sm font-medium text-white bg-[#fe965e] rounded-md hover:bg-[#e8854e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#fe965e]"
                                 >
-                                    Add Module
+                                    Add {isTheory ? "Module" : "Experiment"}
                                 </Button>
                             </div>
                         </form>
                     </DialogContent>
                 </Dialog>
-            </div >
+            </div>
             {activeModule && (
                 <Card className="mt-4 overflow-hidden" style={{
                     background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1A1A1A 100%)'
@@ -264,8 +301,8 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
                             </Table>
                         </div>
                     </CardContent>
-                </Card>)
-            }
+                </Card>
+            )}
         </>
     )
 }

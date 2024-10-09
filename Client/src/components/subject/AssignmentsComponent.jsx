@@ -11,7 +11,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Download, FileText, Plus, Video, Presentation, Upload } from 'lucide-react'
+import { Download, FileText, Plus, Video, Presentation, Upload, Trash2 } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import axios from '@/api/axios'
@@ -113,6 +113,25 @@ export default function AssignmentsComponent({ subjectId }) {
         }
     }
 
+    const handleDeleteAssignment = async (assignmentId) => {
+        if (window.confirm("Are you sure you want to delete this assignment? This action cannot be undone.")) {
+            try {
+                await axios.delete(`/admin/delete/module/${subjectId}/${assignmentId}`, {
+                    data: { access_token: auth.access_token }
+                });
+                setAssignments(assignments.filter(assignment => assignment.id !== assignmentId));
+                if (currentAssignment && currentAssignment.id === assignmentId) {
+                    setCurrentAssignment(null);
+                    setCurrentMaterials([]);
+                }
+                toast.success("Assignment deleted successfully", { position: 'top-right' });
+            } catch (error) {
+                console.error('Error deleting assignment:', error);
+                toast.error("Failed to delete assignment", { position: 'top-right' });
+            }
+        }
+    }
+
     const getIcon = (materialType) => {
         switch (materialType) {
             case 'pdf':
@@ -199,6 +218,22 @@ export default function AssignmentsComponent({ subjectId }) {
                             <CardTitle className="text-md font-bold text-white">Assignment - {assignment.unitNo}</CardTitle>
                             <CardTitle className="text-sm text-gray-300">{assignment.title}</CardTitle>
                         </CardHeader>
+                        {auth.isAdmin && (
+                            <CardContent>
+                                <Button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteAssignment(assignment.id);
+                                    }}
+                                    variant="destructive"
+                                    size="sm"
+                                    className="mt-2"
+                                >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete
+                                </Button>
+                            </CardContent>
+                        )}
                     </Card>
                 ))}
                 <Dialog open={isAddAssignmentOpen} onOpenChange={setIsAddAssignmentOpen}>
@@ -290,6 +325,7 @@ export default function AssignmentsComponent({ subjectId }) {
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead className="w-[300px] text-gray-300">Name</TableHead>
+
                                         <TableHead className="text-right text-gray-300">Action</TableHead>
                                     </TableRow>
                                 </TableHeader>

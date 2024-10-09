@@ -26,7 +26,7 @@ const checkSubjectAndAuthorization = async (req, res, next) => {
                 message: "Unauthorized request",
             });
         }
-        
+
         req.subject = subject;  // Store subject in request for use in route
         next();
     } catch (err) {
@@ -39,9 +39,9 @@ const checkSubjectAndAuthorization = async (req, res, next) => {
 
 //Delete a whole Subject
 //To fix : not deleting the mats in each module
-router.delete("/all/:subId",checkSubjectAndAuthorization,async(req,res)=>{
-    try{
-        let {subId} = req.params;
+router.delete("/all/:subId", checkSubjectAndAuthorization, async (req, res) => {
+    try {
+        let { subId } = req.params;
         const subject = await Subject.findById(subId).populate("components");
 
         const syllId = subject.syllabus;
@@ -52,27 +52,27 @@ router.delete("/all/:subId",checkSubjectAndAuthorization,async(req,res)=>{
 
         const components = subject.components;
         const matslist = components.flatMap((comp) => (comp.mats));
-        await Material.deleteMany({_id: {$in : matslist}});
-        await Module.deleteMany({_id : { $in : components}});
+        await Material.deleteMany({ _id: { $in: matslist } });
+        await Module.deleteMany({ _id: { $in: components } });
 
         const modelQp = subject.moduleQp;
-        await Material.deleteMany({_id : {$in : modelQp}});
+        await Material.deleteMany({ _id: { $in: modelQp } });
         await Subject.findByIdAndDelete(subId);
 
         return res.status(200).send({
-            success : true,
-            message : "Subject Deleted Successfully"
+            success: true,
+            message: "Subject Deleted Successfully"
         });
-    }catch(err){
+    } catch (err) {
         return res.status(500).send({
-            success : false,
-            message : "Error while deleting Subject"
+            success: false,
+            message: "Error while deleting Subject"
         })
     }
 });
 
 //Delete syllabus
-router.delete("/syll/:subId",checkSubjectAndAuthorization, async (req, res) => {
+router.delete("/syll/:subId", checkSubjectAndAuthorization, async (req, res) => {
     try {
         let { subId } = req.params;
 
@@ -101,7 +101,7 @@ router.delete("/syll/:subId",checkSubjectAndAuthorization, async (req, res) => {
 });
 
 //Delete LessonPlan
-router.delete("/lp/:subId", checkSubjectAndAuthorization,async (req, res) => {
+router.delete("/lp/:subId", checkSubjectAndAuthorization, async (req, res) => {
     try {
         let { subId } = req.params;
 
@@ -131,7 +131,7 @@ router.delete("/lp/:subId", checkSubjectAndAuthorization,async (req, res) => {
 });
 
 //Delete a single module
-router.delete("/module/:subId/:modId", checkSubjectAndAuthorization,async (req, res) => {
+router.delete("/module/:subId/:modId", checkSubjectAndAuthorization, async (req, res) => {
     try {
         const { subId, modId } = req.params;
 
@@ -236,50 +236,51 @@ router.delete("/module/:subId/:modId", checkSubjectAndAuthorization,async (req, 
 
 
 //Delete a Single ModelQP
-router.delete("/modelQP/:subId/:qpId", checkSubjectAndAuthorization,async (req,res)=>{
-    try{
-        let {subId,qpId} = req.params;
+router.delete("/modelQP/:subId/:qpId", checkSubjectAndAuthorization, async (req, res) => {
+    try {
+        let { subId, qpId } = req.params;
         const subject = await Subject.findById(subId);
 
-        if(!subject.moduleQp.includes(qpId)){
+        if (!subject.moduleQp.includes(qpId)) {
             return res.status(404).send({
-                success : false,
-                message : "Model Question paper does not exist in this subject"
+                success: false,
+                message: "Model Question paper does not exist in this subject"
             })
         }
         await Material.findByIdAndDelete(qpId);
         subject.moduleQp = subject.moduleQp.filter((qpid) => qpid.toString() !== qpId);
         await subject.save();
         return res.status(200).send({
-            success : true,
-            message : "Model Question Paper deleted successfully"
+            success: true,
+            message: "Model Question Paper deleted successfully"
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return res.status(500).send({
-            success : false,
-            message : "Error while deleting model question paper"
+            success: false,
+            message: "Error while deleting model question paper"
         });
     }
 
 })
 
 //Delete all Refs
-router.delete("/refs/:subId" , checkSubjectAndAuthorization,async (req,res) => {
-    try{
-        let {subId} = req.params;
+router.delete("/refs/:subId", checkSubjectAndAuthorization, async (req, res) => {
+    try {
+        let { subId } = req.params;
+        let { ref } = req.body.data;
         const subject = await Subject.findById(subId);
-        subject.refs = [];
+        subject.refs = subject.refs.filter(r => r !== ref);
         await subject.save();
         return res.status(200).send({
-            success : true,
-            message : "Reference Links deleted Successfully"
+            success: true,
+            message: "Reference Links deleted Successfully"
         })
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return res.status(500).send({
-            success : false,
-            message : "Erro while deleting refs"
+            success: false,
+            message: "Erro while deleting refs"
         })
     }
 })

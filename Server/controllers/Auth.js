@@ -5,7 +5,7 @@ import User from "../models/users.js"
 import { userSchema, querySchema } from "../Schema.js";
 import { compare, compareSync, hash } from "bcrypt";
 import jwt from "jsonwebtoken";
-import passport from "../utils/passport/jwtStrategy.js";
+// import passport from "../utils/passport/jwtStrategy.js";
 import dotenv from "dotenv";
 import Query from "../models/queries.js";
 //To do

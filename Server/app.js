@@ -22,12 +22,11 @@ const verifyJWT = (req, res, next) => {
     const token = req.body.access_token;
 
     // const token = authHeader.split(' ')[1];
-
     jwt.verify(
         token,
         process.env.JWTSECRET_KEY,
         (err, decoded) => {
-            console.log(err, decoded)
+            // console.log(err, decoded)
             if (err) {
                 return res.sendStatus(403);
             }
@@ -36,6 +35,7 @@ const verifyJWT = (req, res, next) => {
                 user: decoded.username,
                 data: req.body,
             }
+            // console.log("JWT Verify: ", req.body);
             next();
         }
     );

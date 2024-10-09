@@ -6,15 +6,17 @@ import { querySchema } from "../Schema.js";
 import { compare, compareSync, hash } from "bcrypt";
 import Query from "../models/queries.js";
 
-//Route - /api/query
+//Route - /api/query  
 
 //Get all users Queries
 //id - userId 
-router.get("/all/:id", async (req, res) => {
+router.post("/all/", async (req, res) => {
     try {
-        const { id } = req.params;
+        console.log("Received request to /api/query/all");
+    console.log("Request body:", req.body);
+        const {id} = req.body;
+        // console.log(id);
         const user = await User.findById(id).populate("queries");
-        // console.log(id)
         if (!user) {
             return res.status(404).send({
                 success: false,
@@ -37,7 +39,7 @@ router.get("/all/:id", async (req, res) => {
 })
 
 //Get all the admins name and _id
-router.get("/admins", async (req, res) => {
+router.post("/admins", async (req, res) => {
     try {
         const admins = await User.find({ isAdmin: true });
         const result = admins.map((admin) => ({

@@ -34,7 +34,7 @@ const App = () => {
           </Route>
 
           <Route element={<RequireAuth />}>
-            <Route path="/queries" element={auth?.isAdmin ? <QueriesAdminPage /> : <QueriesPage />} />
+            <Route path="/queries" element={auth?.isAdmin ? <QueriesPage /> : <QueriesPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>

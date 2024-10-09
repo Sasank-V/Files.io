@@ -10,7 +10,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Download, FileText, Plus, Upload } from 'lucide-react'
+import { Download, FileText, Plus, Upload, Trash2 } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import axios from '@/api/axios'
@@ -108,6 +108,24 @@ export default function ModelQPComponent({ subjectId }) {
         }
     }
 
+    const handleDeleteQP = async (qpId) => {
+        if (window.confirm("Are you sure you want to delete this Model Question Paper? This action cannot be undone.")) {
+            try {
+                await axios.delete(`/admin/delete/modelQP/${subjectId}/${qpId}`, {
+                    data: { access_token: auth.access_token }
+                });
+                setModelQPs(modelQPs.filter(qp => qp._id !== qpId));
+                if (currentQP && currentQP._id === qpId) {
+                    setCurrentQP(null);
+                }
+                toast.success("Model Question Paper deleted successfully", { position: 'top-right' });
+            } catch (error) {
+                console.error('Error deleting Model Question Paper:', error);
+                toast.error("Failed to delete Model Question Paper", { position: 'top-right' });
+            }
+        }
+    }
+
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -142,6 +160,22 @@ export default function ModelQPComponent({ subjectId }) {
                         <CardHeader>
                             <CardTitle className="text-md font-bold text-white">{qp.name}</CardTitle>
                         </CardHeader>
+                        {auth.isAdmin && (
+                            <CardContent>
+                                <Button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteQP(qp._id);
+                                    }}
+                                    variant="destructive"
+                                    size="sm"
+                                    className="mt-2 bg-red-500 hover:bg-red-600 text-white"
+                                >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete
+                                </Button>
+                            </CardContent>
+                        )}
                     </Card>
                 ))}
                 <Dialog open={isAddQPOpen} onOpenChange={setIsAddQPOpen}>

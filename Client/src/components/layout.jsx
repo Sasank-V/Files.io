@@ -81,7 +81,7 @@ export default function Layout() {
               <span id="logo" className="hidden font-bold sm:inline-block text-lg">Files.io</span>
             </Link>
             <nav className="flex ml-10 items-center space-x-6 text-md font-medium">
-              <Link to="/" id='nav'>Home</Link>
+              <Link to={auth?.isAdmin ? "/dashboard" : "/"} id='nav'>Home</Link>
               <Link to="/learn" id='nav'>Learn</Link>
               <Link to="/queries" id='nav'>Queries</Link>
             </nav>

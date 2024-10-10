@@ -25,7 +25,8 @@ const App = () => {
     createRoutesFromElements(
       <Route element={<Layout />}>
         <Route element={<PersistentLogin />}>
-          <Route path="/" element={auth?.isAdmin ? <TeacherHomePage /> : <HomePage />} />
+          <Route path="/" element={<HomePage />} />
+          {auth?.isAdmin && <Route path="/dashboard" element={<TeacherHomePage />} />}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/learn" element={<LearnPage />} />

@@ -194,13 +194,13 @@ export default function ModelQPComponent({ subjectId }) {
                             </Card>
                         </DialogTrigger>
                     }
-                    <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                    <DialogContent className="sm:max-w-[425px] border-0 bg-white dark:bg-gray-800 text-white dark:text-gray-100 font-vssemibold" style={{ background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1A1A1A 100%)' }}>
                         <DialogHeader>
                             <DialogTitle className="text-2xl font-bold text-[#fe965e]">Add New Model Question Paper</DialogTitle>
                         </DialogHeader>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="year" className="text-sm font-medium text-gray-700 dark:text-gray-300">Year</Label>
+                                <Label htmlFor="year" className="text-sm font-medium text-white dark:text-gray-300">Year</Label>
                                 <Input
                                     id="year"
                                     name="year"
@@ -212,7 +212,7 @@ export default function ModelQPComponent({ subjectId }) {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="term" className="text-sm font-medium text-gray-700 dark:text-gray-300">Term</Label>
+                                <Label htmlFor="term" className="text-sm font-medium text-white dark:text-gray-300">Term</Label>
                                 <Select name="term" onValueChange={(value) => handleInputChange({ target: { name: 'term', value } })} value={newQP.term}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select term" />
@@ -225,7 +225,7 @@ export default function ModelQPComponent({ subjectId }) {
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="file-upload" className="text-sm font-medium text-gray-700 dark:text-gray-300">Upload Question Paper (PDF)</Label>
+                                <Label htmlFor="file-upload" className="text-sm font-medium text-white dark:text-gray-300">Upload Question Paper (PDF)</Label>
                                 <Input
                                     id="file-upload"
                                     type="file"
@@ -239,7 +239,7 @@ export default function ModelQPComponent({ subjectId }) {
                                     type="button"
                                     variant="outline"
                                     onClick={handleCloseAddQP}
-                                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#fe965e] dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+                                    className="px-4 py-2 text-sm font-medium text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#fe965e] dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
                                 >
                                     Cancel
                                 </Button>

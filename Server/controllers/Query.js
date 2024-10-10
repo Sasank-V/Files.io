@@ -134,6 +134,7 @@ router.put("/reply/admin/:queryId", async (req, res) => {
         let { queryId } = req.params;
         const currUser = await User.findById(userId);
         const currQuery = await Query.findById(queryId);
+
         if (!currQuery) {
             return res.status(404).send({
                 success: false,
@@ -148,6 +149,9 @@ router.put("/reply/admin/:queryId", async (req, res) => {
         }
         const data = req.body.data;
         let reply = data.reply;
+
+        console.log(reply);
+
         if (!reply || reply === "") {
             return res.status(402).send({
                 success: false,

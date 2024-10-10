@@ -84,7 +84,7 @@ export default function TutorialVideosComponent({ subjectId }) {
                                 Add Links
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px] bg-gray-800 text-white">
+                        <DialogContent className="sm:max-w-[425px] border-0 bg-white dark:bg-gray-800 text-white dark:text-gray-100 font-vssemibold" style={{ background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1A1A1A 100%)' }}>
                             <DialogHeader>
                                 <DialogTitle className="text-2xl font-bold text-[#fe965e]">Add New Link</DialogTitle>
                             </DialogHeader>

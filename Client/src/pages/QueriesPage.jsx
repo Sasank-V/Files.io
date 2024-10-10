@@ -25,7 +25,7 @@ export default function QueryPage() {
 
   const fetchQueries = async () => {
     try {
-      const response = await axios.post('/api/query/all', { id: auth.userId, access_token: auth.access_token })
+      const response = await axios.post('/query/all', { access_token: auth.access_token })
       setQueries(response.data.queries)
     } catch (error) {
       console.error('Error fetching queries:', error)
@@ -35,7 +35,7 @@ export default function QueryPage() {
 
   const fetchAdmins = async () => {
     try {
-      const response = await axios.post('/api/query/admins', { access_token: auth.access_token })
+      const response = await axios.post('/query/admins', { access_token: auth.access_token })
       setAdmins(response.data.data)
     } catch (error) {
       console.error('Error fetching admins:', error)
@@ -47,9 +47,8 @@ export default function QueryPage() {
     e.preventDefault()
     if (query.trim() && selectedAdmin) {
       try {
-        await axios.post('/api/query/post', {
-          data: { to: selectedAdmin, ques: query, type: 0 },
-          id: auth.userId,
+        await axios.post('/query/post', {
+          to: selectedAdmin, ques: query, type: 0,
           access_token: auth.access_token
         })
         toast.success('Query submitted successfully')
@@ -64,9 +63,8 @@ export default function QueryPage() {
 
   const handleEdit = async (queryId, newQuestion) => {
     try {
-      await axios.put(`/api/query/edit/${queryId}`, {
+      await axios.put(`/query/edit/${queryId}`, {
         data: { ques: newQuestion },
-        id: auth.userId,
         access_token: auth.access_token
       })
       toast.success('Query updated successfully')

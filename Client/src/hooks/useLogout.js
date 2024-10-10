@@ -8,26 +8,12 @@ const useLogout = () => {
     const logout = async () => {
         setAuth({});
         try {
-            const response = await fetch("http://localhost:8080/api/auth/logout", { method: 'GET', credentials: 'include' });
+            const response = await axiosPrivate.get("/auth/logout");
         } catch (err) {
             console.error(err);
         }
     }
     return logout;
-}
-
-
-
-
-export const lg = async () => {
-    console.log("sdf")
-    const { setAuth } = useAuth();
-    setAuth({});
-    try {
-        const response = await fetch("http://localhost:8080/api/auth/logout", { method: 'GET', credentials: 'include' });
-    } catch (err) {
-        console.error(err);
-    }
 }
 
 

@@ -56,7 +56,6 @@ const LoginPage = () => {
 
             setAuth({ isAdmin, access_token, username });
 
-            console.log(message)
 
             toast.success(message, { position: 'top-right' });
 

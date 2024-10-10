@@ -20,7 +20,6 @@ const LessonPlan = ({ subjectId }) => {
 
             setCurrentLessonPlan((prev) => ({ ...prev, filename: lp?.name, url: lp?.url }));
 
-            console.log(res);
         }
 
         fetchSubjectDetails();

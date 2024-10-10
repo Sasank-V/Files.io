@@ -58,12 +58,12 @@ const LoadingComponent = ({text}) => {
     }, [])
 
     return (
-        <Card className="w-full h-[100vh] bg-gradient-to-br from-[#FFF5EB] to-[#FFE4CA] relative overflow-hidden">
+        <Card className="w-full h-full bg-gradient-to-br from-[#FFF5EB] to-[#FFE4CA] relative overflow-hidden">
             <CardContent className="flex flex-col items-center justify-center h-full">
                 <div ref={containerRef} className="relative w-[100px] h-[100px]">
                     {/* Dots will be appended here */}
                 </div>
-                <p ref={textRef} className="mt-8 text-2xl font-bold text-[#333333]">
+                <p ref={textRef} className="mt-8 text-2xl font-bold text-[#333333] font-vssemibold">
                     {text}...
                 </p>
             </CardContent>

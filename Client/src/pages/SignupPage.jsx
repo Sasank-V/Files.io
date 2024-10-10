@@ -60,7 +60,6 @@ const SignupPage = () => {
         }).then((res) => {
             const { message } = res.data;
 
-            console.log(message)
 
             toast.success(message, { position: 'top-right' });
             setDonePost(true);

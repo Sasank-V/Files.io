@@ -25,7 +25,6 @@ export default function TheoryUploadComponent({ subjectId }) {
         try {
             const res = await axios.get(`/learn/module/all/${subjectId}/0`)
             let data = res.data.data
-            console.log(data)
             setModules(data)
         } catch (error) {
             console.error('Error fetching modules:', error)
@@ -60,7 +59,6 @@ export default function TheoryUploadComponent({ subjectId }) {
         try {
             const response = await axiosPrivate.post(`/admin/upload/module/${subjectId}/${selectedModule}`, { access_token: auth.access_token, files: [{ name: materialName, url: fileUrl }] });
 
-            console.log(response);
             setSelectedModule('')
             setSelectedFile(null)
 

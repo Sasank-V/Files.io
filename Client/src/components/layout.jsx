@@ -3,7 +3,7 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Zap } from 'lucide-react'
+import { Menu, X, Zap, Github, Linkedin } from 'lucide-react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import useAuth from '@/hooks/useAuth'
@@ -32,18 +32,6 @@ export default function Layout() {
       x: -50,
       ease: "power4.out",
     })
-    // gsap.from("#nav", {
-    //   opacity: 0,
-    //   stagger: 0.5,
-    //   duration: 0.75,
-    //   y: -30,
-    // })
-    // gsap.from(zapRef.current, {
-    //   scale: 0,
-    //   rotation: -180,
-    //   duration: 1,
-    //   ease: "elastic.out(1, 0.3)",
-    // })
   }, [])
 
   useEffect(() => {
@@ -156,10 +144,34 @@ export default function Layout() {
           <Outlet />
         </div>
       </div>
-      <div className='h-[20vh] flex-grow-0 flex w-full bg-black text-white p-10'>
-        This is the footer
-      </div>
-
+      <footer className='h-auto flex-grow-0 flex flex-col justify-center items-center w-full bg-black text-white p-10 space-y-4'>
+        <div>Made By <a href='https://github.com/Sasank-V' className="underline">Sasank</a> & <a href='https://github.com/soorajsunil1409' className="underline">Sooraj</a></div>
+        <div className="text-lg font-semibold">Contact Us</div>
+        <div className="flex space-x-8">
+          <div className="flex flex-col items-center space-y-2">
+            <div className="font-medium">Sasank V</div>
+            <div className="flex space-x-4">
+              <a href="https://github.com/Sasank-V" target="_blank" rel="noopener noreferrer" aria-label="Sasank's GitHub">
+                <Github className="h-6 w-6" />
+              </a>
+              <a href="https://www.linkedin.com/in/sasank-v-a75a58279/" target="_blank" rel="noopener noreferrer" aria-label="Sasank's LinkedIn">
+                <Linkedin className="h-6 w-6" />
+              </a>
+            </div>
+          </div>
+          <div className="flex flex-col items-center space-y-2">
+            <div className="font-medium">Sooraj Sunil</div>
+            <div className="flex space-x-4">
+              <a href="https://github.com/soorajsunil1409" target="_blank" rel="noopener noreferrer" aria-label="Sooraj's GitHub">
+                <Github className="h-6 w-6" />
+              </a>
+              <a href="https://www.linkedin.com/in/sooraj-s-namboothiry-b564a928a/" target="_blank" rel="noopener noreferrer" aria-label="Sooraj's LinkedIn">
+                <Linkedin className="h-6 w-6" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
       <div className="absolute bg-red-100 z-100">
         <ToastContainer />
       </div>

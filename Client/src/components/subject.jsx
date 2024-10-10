@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "react-toastify"
+import LoadingComponent from "./loading"
 
 export function Subject() {
   const location = useLocation()
@@ -26,7 +27,8 @@ export function Subject() {
   const [subjectAdmin, setSubjectAdmin] = useState("")
   const { auth } = useAuth()
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [deleteConfirmation, setDeleteConfirmation] = useState("")
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [loading,setLoading] = useState(false);
 
   const subjectId = new URLSearchParams(location.search).get("id")
 
@@ -39,8 +41,9 @@ export function Subject() {
       const res = await axios.get(`/learn/${subjectId}`)
       setSubject(res.data.data)
     }
-
+    setLoading(true);
     fetchSubjectDetails()
+    setLoading(false);
   }, [subjectId])
 
   useEffect(() => {
@@ -50,8 +53,9 @@ export function Subject() {
       const data = res.data
       setSubjectAdmin(data.name)
     }
-
+    setLoading(true);
     fetchSubjectAdminDetails()
+    setLoading(false);
   }, [subject])
 
   const handleDeleteSubject = async () => {
@@ -59,11 +63,12 @@ export function Subject() {
       toast.error("Incorrect confirmation text. Please try again.")
       return
     }
-
+    setLoading(true);
     try {
       await axios.delete(`/admin/delete/all/${subjectId}`, {
         data: { access_token: auth.access_token }
     });
+    setLoading(false);
       toast.success("Subject deleted successfully")
       setIsDeleteDialogOpen(false)
       navigate("/learn")
@@ -115,6 +120,9 @@ export function Subject() {
                 <DialogHeader>
                   <DialogTitle className="text-[#fe965e]">Delete Subject</DialogTitle>
                 </DialogHeader>
+                {loading ? <div className="w-full h-[350px]">
+                  <LoadingComponent text="Deleting subject"/>
+                </div> :
                 <div className="space-y-4">
                   <p>Are you sure you want to delete this subject? This action cannot be undone.</p>
                   <p>To confirm, please type "DEL_{subject.name}" below:</p>
@@ -129,7 +137,7 @@ export function Subject() {
                   >
                     Confirm Delete
                   </Button>
-                </div>
+                </div>}
               </DialogContent>
             </Dialog>
           </CardContent>

@@ -25,7 +25,6 @@ export default function LabsUploadComponent({ subjectId }) {
         try {
             const res = await axios.get(`/learn/module/all/${subjectId}/1`)
             let data = res.data.data
-            console.log(data)
             setModules(data)
         } catch (error) {
             console.error('Error fetching modules:', error)
@@ -60,7 +59,6 @@ export default function LabsUploadComponent({ subjectId }) {
         try {
             const response = await axiosPrivate.post(`/admin/upload/module/${subjectId}/${selectedModule}`, { access_token: auth.access_token, files: [{ name: materialName, url: fileUrl }] });
 
-            console.log(response);
             setDoneUpload(true);
 
             setSelectedModule('')
@@ -71,7 +69,6 @@ export default function LabsUploadComponent({ subjectId }) {
             toast.error("Error uploading material", { position: 'top-right' });
             const baseUrl = ""
             const path = decodeURIComponent(fileUrl.split(baseUrl)[1].split("?")[0]);
-            console.log(path);
 
             // console.error('Error uploading material:', error)
         } finally {

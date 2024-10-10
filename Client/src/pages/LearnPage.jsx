@@ -21,6 +21,7 @@ const AddSubjectCard = ({ onAdd }) => {
   const [subjectName, setSubjectName] = useState('')
   const [subjectCode, setSubjectCode] = useState('')
   const [onCard, setOnCard] = useState(false)
+  const [loading,setLoading] = useState(false);
 
   const cardRef = useRef(null)
   const overlayRef = useRef(null)
@@ -29,8 +30,10 @@ const AddSubjectCard = ({ onAdd }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setLoading(true);
     try {
       await onAdd(subjectName, subjectCode)
+      setLoading(false);
       setIsOpen(false)
       setSubjectName('')
       setSubjectCode('')
@@ -110,6 +113,10 @@ const AddSubjectCard = ({ onAdd }) => {
         <DialogHeader>
           <DialogTitle className="text-orange-400">Add New Subject</DialogTitle>
         </DialogHeader>
+        {loading ? 
+        <div className='w-full h-[350px]'>
+          <LoadingComponent text="Creating Subject" /> 
+        </div> :
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="subjectName" className="text-gray-300">Subject Name</Label>
@@ -134,7 +141,7 @@ const AddSubjectCard = ({ onAdd }) => {
           <Button type="submit" className="w-full bg-orange-400 hover:bg-orange-500 text-white font-semibold">
             Create Subject
           </Button>
-        </form>
+        </form>}
       </DialogContent>
     </Dialog>
   )
@@ -172,7 +179,7 @@ const LearnPage = () => {
             try {
                 const res = await axios.get("/learn/all")
                 const data = res.data.data
-                console.log(data);
+
                 setSubjects(data)
                 setSubFetched(true)
             } catch (error) {
@@ -198,6 +205,12 @@ const LearnPage = () => {
             console.error('Error creating new subject:', error)
             throw error
         }
+    }
+
+    if(!subFetched){
+      return <div className='w-full h-[100vh]'>
+        <LoadingComponent text="Fetching Subjects"/>
+      </div>
     }
 
     if(subjects.length == 0){

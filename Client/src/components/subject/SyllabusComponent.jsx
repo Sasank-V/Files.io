@@ -23,7 +23,6 @@ const SyllabusComponent = ({ subjectId }) => {
 
             setCurrentSyllabus((prev) => ({ ...prev, filename: syllabus?.name, url: syllabus?.url }));
 
-            console.log(res);
         }
 
         fetchSubjectDetails();

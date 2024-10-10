@@ -69,8 +69,6 @@ const SyllabusUploadComponent = ({ subjectId }) => {
 
         setCurrentSyllabus((prev) => ({ ...prev, filename: fileName, url }));
         setDoneUpload(true);
-
-        console.log(response.data);
     }
 
     const handleDelete = async () => {

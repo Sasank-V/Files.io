@@ -13,7 +13,6 @@ const LabsComponent = ({ subjectId }) => {
                 const res = await axios.get(`/learn/module/all/${subjectId}/1`)
                 let data = res.data.data
 
-                console.log(data);
                 setModules(data)
             } catch (error) {
                 console.error('Error fetching experiments:', error)

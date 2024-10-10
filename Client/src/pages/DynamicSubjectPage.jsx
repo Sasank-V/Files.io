@@ -57,7 +57,7 @@ const DynamicSubjectComponent = () => {
     }
 
     return (
-        <Suspense fallback={<LoadingComponent />}>
+        <Suspense fallback={<LoadingComponent text="Loading"/>}>
             <SubjectComponent subjectId={subjectId} />
         </Suspense>
         // <LoadingComponent />

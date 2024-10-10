@@ -35,7 +35,6 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
                     const res = await axios.get(`learn/module/get/${activeModule.id}`)
                     const data = res.data.data.mats;
                     setCurrentMaterials(data);
-                    console.log(data);
                 } catch (error) {
                     console.error('Error fetching module materials:', error)
                 }
@@ -54,7 +53,6 @@ export default function TheoryDisplayComponent({ modules, setModules, subjectId,
             const res = await axios.get(`learn/module/get/${moduleId}`)
             const data = res.data.data.mats
             setCurrentMaterials(data)
-            console.log(data)
         } catch (error) {
             console.error('Error fetching module materials:', error)
         }

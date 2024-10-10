@@ -43,7 +43,6 @@ export default function AssignmentsComponent({ subjectId }) {
                 const res = await axios.get(`/learn/module/all/${subjectId}/2`)
                 let data = res.data.data;
                 data = data.sort((a, b) => a.unitNo - b.unitNo);
-                console.log(data)
                 setAssignments(data)
             } catch (error) {
                 console.error('Error fetching assignments:', error)
@@ -61,7 +60,6 @@ export default function AssignmentsComponent({ subjectId }) {
             const res = await axios.get(`learn/module/get/${assId}`)
             const data = res.data.data.mats
             setCurrentMaterials(data)
-            console.log(data)
         } catch (error) {
             console.error('Error fetching module materials:', error)
         }
@@ -172,7 +170,6 @@ export default function AssignmentsComponent({ subjectId }) {
                 files: [{ name: materialName, url: fileUrl }]
             })
 
-            console.log(response)
             toast.success("Material uploaded successfully", { position: 'top-right' })
 
             setSelectedAssignment('')

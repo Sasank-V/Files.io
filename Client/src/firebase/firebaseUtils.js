@@ -14,8 +14,6 @@ const uploadFile = async (file = null, subjectId, where, fileName) => {
 
         const downloadedUrl = await getDownloadURL(snapshot.ref);
 
-        console.log(downloadedUrl);
-
         toast.success("File sucessfully uploaded", { position: 'top-right' });
 
         return downloadedUrl;

@@ -29,7 +29,9 @@ const PersistentLogin = () => {
         <>
             {
                 isLoading
-                    ? <LoadingComponent/>
+                    ? <div className="w-full h-[100vh]">
+                        <LoadingComponent text="Loading"/>
+                    </div>
                     : <Outlet />
             }
         </>

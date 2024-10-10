@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider, Route, Routes, createRoutesFromElements, Navigate, useNavigate } from 'react-router-dom';
 
 
-import Layout from './components/Layout';
+import Layout from './components/layout.jsx';
 import { ThemeProvider } from './components/theme-provider';
 import HomePage from '@/pages/HomePage';
 import LearnPage from '@/pages/LearnPage';

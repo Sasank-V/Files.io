@@ -25,14 +25,21 @@ router.post("/subject/new", async (req, res) => {
                 message: "An unauthorised Access",
             });
         }
-        let { err } = subjectSchema.validate(data);
+        let { err } = subjectSchema.validate({
+            name : data.name,
+            code : data.code,
+        });
         if (err) {
             return res.status(401).send({
                 success: false,
                 message: "Send a Valid Object",
             });
         } else {
-            const newSubject = new Subject(data);
+            const newSubject = new Subject({
+                name: data.name,
+                code: data.code,
+                admin: userId,
+            });
             const savedSub = await newSubject.save();
             return res.status(200).send({
                 success: true,

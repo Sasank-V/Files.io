@@ -14,7 +14,6 @@ export const querySchema = Joi.object({
 });
 
 export const subjectSchema = Joi.object({
-    admin : Joi.string().required(),
     name : Joi.string().required(),
     code : Joi.string().required(),
 });

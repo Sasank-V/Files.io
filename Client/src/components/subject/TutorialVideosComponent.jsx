@@ -73,24 +73,24 @@ export default function TutorialVideosComponent({ subjectId }) {
         }}>
             <CardHeader className="flex flex-row items-center justify-between border-b border-gray-700">
                 <div>
-                    <CardTitle className="text-2xl font-bold text-[#fe965e]">Tutorial Videos</CardTitle>
-                    <CardDescription className="text-gray-400">Watch tutorial videos for this subject</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-[#fe965e]">Reference Links</CardTitle>
+                    <CardDescription className="text-gray-400">Reference Links for this Subject</CardDescription>
                 </div>
                 {auth.isAdmin && (
                     <Dialog open={isAddVideoOpen} onOpenChange={setIsAddVideoOpen}>
                         <DialogTrigger asChild>
                             <Button variant="outline" className="bg-[#fe965e] hover:bg-[#e8854e] text-white">
                                 <Plus className="h-4 w-4 mr-2" />
-                                Add Video
+                                Add Links
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px] bg-gray-800 text-white">
                             <DialogHeader>
-                                <DialogTitle className="text-2xl font-bold text-[#fe965e]">Add New Video</DialogTitle>
+                                <DialogTitle className="text-2xl font-bold text-[#fe965e]">Add New Link</DialogTitle>
                             </DialogHeader>
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="url" className="text-gray-300">Video URL</Label>
+                                    <Label htmlFor="url" className="text-gray-300">Reference URL</Label>
                                     <Input
                                         id="url"
                                         name="url"
@@ -106,7 +106,7 @@ export default function TutorialVideosComponent({ subjectId }) {
                                         Cancel
                                     </Button>
                                     <Button type="submit" className="bg-[#fe965e] hover:bg-[#e8854e] text-white">
-                                        Add Video
+                                        Add Link
                                     </Button>
                                 </div>
                             </form>
@@ -120,14 +120,14 @@ export default function TutorialVideosComponent({ subjectId }) {
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="text-gray-300">Title</TableHead>
-                                <TableHead className="text-gray-300">Video Link</TableHead>
+                                <TableHead className="text-gray-300">Link</TableHead>
                                 <TableHead className="text-right text-gray-300">Action</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {videos.map((video, i) => (
                                 <TableRow key={i} className="border-b border-gray-700">
-                                    <TableCell className="font-medium text-gray-200">Video - {i + 1}</TableCell>
+                                    <TableCell className="font-medium text-gray-200">Link - {i + 1}</TableCell>
                                     <TableCell className="text-gray-300">
                                         <div className="flex items-center">
                                             <Video className="mr-2 h-4 w-4 text-[#fe965e]" />
@@ -143,7 +143,7 @@ export default function TutorialVideosComponent({ subjectId }) {
                                                     className="hover:text-[#fe965e] text-gray-300"
                                                 >
                                                     <ExternalLink className="mr-2 h-4 w-4" />
-                                                    Watch
+                                                    Go
                                                 </Button>
                                             </a>
                                             {auth.isAdmin && (

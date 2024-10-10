@@ -20,7 +20,6 @@ const verifyJWT = (req, res, next) => {
     // if (!authHeader) return res.sendStatus(401);
 
     const token = req.body.access_token;
-
     // const token = authHeader.split(' ')[1];
     jwt.verify(
         token,
@@ -28,7 +27,11 @@ const verifyJWT = (req, res, next) => {
         (err, decoded) => {
             // console.log(err, decoded)
             if (err) {
-                return res.sendStatus(403);
+                console.log("JWT Error : " , err);
+                return res.status(403).send({
+                    success : false,
+                    message : "Error while verifying JWT Token",
+                });
             }
             req.body = {
                 id: decoded.id,

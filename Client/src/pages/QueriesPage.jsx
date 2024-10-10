@@ -76,25 +76,25 @@ export default function QueryPage() {
   }
 
   return (
-    <main className='flex flex-col w-full min-h-screen overflow-y-auto bg-black text-gray-300'>
-      <div className="w-full p-6 md:p-10">
-        <div className="w-full h-full flex flex-col justify-start items-center">
-          <div className="md:text-[60px] text-[30px] font-semibold text-center mb-2 text-gray-100">
+    <main className='flex w-full h-full overflow-y-scroll bg-white'>
+      <div className="md:w-[50%] w-full p-10">
+        <div className="w-full h-full flex flex-col p-10 justify-center items-center">
+          <div className="md:text-[60px] text-[30px] font-semibold justify-start text-center text-gray-800">
             Student Queries
           </div>
-          <div className="text-[24px] font-semibold text-gray-400 mb-10">
+          <div className="text-[24px] font-semibold text-[#fe965e] mt-2 mb-10">
             Ask your questions and view responses
           </div>
-          <form onSubmit={handleSubmit} className='w-full max-w-[800px] mb-10'>
+          <form onSubmit={handleSubmit} className='w-full max-w-[400px]'>
             <div className='space-y-4'>
               <div className='space-y-2'>
-                <Label htmlFor="admin" className="text-gray-400">Select Admin</Label>
+                <Label htmlFor="admin" className="text-gray-700">Select Admin</Label>
                 <select
                   id="admin"
                   value={selectedAdmin}
                   onChange={(e) => setSelectedAdmin(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 bg-gray-800 text-gray-100 border-gray-700"
+                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe965e] bg-white text-gray-900 border-gray-300"
                 >
                   <option value="">Select an admin</option>
                   {admins.map((admin) => (
@@ -103,49 +103,49 @@ export default function QueryPage() {
                 </select>
               </div>
               <div className='space-y-2'>
-                <Label htmlFor="query" className="text-gray-400">Your Query</Label>
+                <Label htmlFor="query" className="text-gray-700">Your Query</Label>
                 <Textarea
                   id="query"
                   placeholder="Type your question here..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 min-h-[100px] bg-gray-800 text-gray-100 border-gray-700"
+                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe965e] min-h-[100px] bg-white text-gray-900 border-gray-300"
                 />
               </div>
             </div>
-            <div className='flex justify-center mt-[30px] w-full'>
-              <Button type="submit" className="w-[200px] bg-gray-700 hover:bg-gray-600 rounded-full p-3 text-lg text-white text-center transition-colors duration-200">
+            <div className='flex justify-center mt-[50px] w-full'>
+              <Button type="submit" className="w-[200px] bg-[#fe965e] hover:bg-[#e8854e] rounded-md p-3 text-lg text-white text-center">
                 Submit Query
               </Button>
             </div>
           </form>
-          <div className="w-full max-w-[800px] grid md:grid-cols-2 gap-6">
-            <div>
-              <h2 className="text-2xl font-semibold mb-4 text-gray-100">Your Queries</h2>
-              <ScrollArea className="h-[300px] w-full rounded-md border border-gray-700 p-4 bg-gray-900">
-                {queries.map((item) => (
-                  <div key={item._id} className="mb-4 last:mb-0 flex justify-between items-start">
-                    <div className="font-medium text-gray-300 mr-2">{item.ques}</div>
-                    <Badge variant={item.status ? "success" : "secondary"} className={`ml-2 shrink-0 ${item.status ? 'bg-green-600' : 'bg-gray-600'}`}>
-                      {item.status ? "Answered" : "Pending"}
-                    </Badge>
-                  </div>
-                ))}
-              </ScrollArea>
-            </div>
-            <div>
-              <h2 className="text-2xl font-semibold mb-4 text-gray-100">Responses</h2>
-              <ScrollArea className="h-[300px] w-full rounded-md border border-gray-700 p-4 bg-gray-900">
-                {queries.filter(item => item.status).map((item) => (
-                  <div key={item._id} className="mb-6 last:mb-0">
-                    <div className="font-semibold text-gray-400">Q: {item.ques}</div>
-                    <div className="mt-2 pl-4 border-l-2 border-gray-700 text-gray-300">A: {item.res}</div>
-                  </div>
-                ))}
-              </ScrollArea>
-            </div>
-          </div>
+        </div>
+      </div>
+      <div className='md:flex hidden w-[50%] justify-center h-[95vh]'>
+        <div className='w-[90%] h-[90%] flex flex-col items-center justify-center p-6 bg-[#f9d9c6] rounded-lg shadow-lg'>
+          <h2 className="text-2xl font-semibold mb-4 text-[#fe965e]">Your Queries</h2>
+          <ScrollArea className="h-[300px] w-full rounded-md border border-[#fe965e] p-4 bg-[#222222] mb-6">
+            {queries.map((item, index) => (
+              <div key={item._id} className={`py-4 ${index !== queries.length - 1 ? 'border-b border-gray-700' : ''}`}>
+                <div className="flex justify-between items-start">
+                  <div className="font-medium text-gray-200 mr-2">{item.ques}</div>
+                  <Badge variant={item.status ? "success" : "secondary"} className={`ml-2 shrink-0 ${item.status ? 'bg-green-600' : 'bg-[#fe965e]'}`}>
+                    {item.status ? "Answered" : "Pending"}
+                  </Badge>
+                </div>
+              </div>
+            ))}
+          </ScrollArea>
+          <h2 className="text-2xl font-semibold mb-4 text-[#fe965e]">Responses</h2>
+          <ScrollArea className="h-[300px] w-full rounded-md border border-[#fe965e] p-4 bg-[#222222]">
+            {queries.filter(item => item.status).map((item, index) => (
+              <div key={item._id} className={`py-4 ${index !== queries.filter(q => q.status).length - 1 ? 'border-b border-gray-700' : ''}`}>
+                <div className="font-semibold text-gray-200">Q: {item.ques}</div>
+                <div className="mt-2 pl-4 border-l-2 border-[#fe965e] text-gray-300">A: {item.res}</div>
+              </div>
+            ))}
+          </ScrollArea>
         </div>
       </div>
     </main>

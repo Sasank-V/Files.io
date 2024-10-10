@@ -252,13 +252,13 @@ export default function AssignmentsComponent({ subjectId }) {
                             </Card>
                         </DialogTrigger>
                     }
-                    <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                    <DialogContent className="sm:max-w-[425px] border-0 bg-white dark:bg-gray-800 text-white font-vssemibold" style={{ background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1A1A1A 100%)' }}>
                         <DialogHeader>
                             <DialogTitle className="text-2xl font-bold text-[#fe965e]">Add New Assignment</DialogTitle>
                         </DialogHeader>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-300">Assignment Title</Label>
+                                <Label htmlFor="title" className="text-sm font-medium text-white dark:text-gray-300">Assignment Title</Label>
                                 <Input
                                     id="title"
                                     name="title"
@@ -269,7 +269,7 @@ export default function AssignmentsComponent({ subjectId }) {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="unitNo" className="text-sm font-medium text-gray-700 dark:text-gray-300">Assignment Number</Label>
+                                <Label htmlFor="unitNo" className="text-sm font-medium text-white dark:text-gray-300">Assignment Number</Label>
                                 <Input
                                     id="unitNo"
                                     name="unitNo"
@@ -281,7 +281,7 @@ export default function AssignmentsComponent({ subjectId }) {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="description" className="text-sm font-medium text-gray-700 dark:text-gray-300">Assignment Description</Label>
+                                <Label htmlFor="description" className="text-sm font-medium text-white dark:text-gray-300">Assignment Description</Label>
                                 <Textarea
                                     id="description"
                                     name="description"
@@ -296,7 +296,7 @@ export default function AssignmentsComponent({ subjectId }) {
                                     type="button"
                                     variant="outline"
                                     onClick={handleCloseAddAssignment}
-                                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#fe965e] dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+                                    className="px-4 py-2 text-sm font-medium text-black bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#fe965e] dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
                                 >
                                     Cancel
                                 </Button>

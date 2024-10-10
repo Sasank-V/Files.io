@@ -48,7 +48,9 @@ export default function QueryPage() {
     if (query.trim() && selectedAdmin) {
       try {
         await axios.post('/api/query/post', {
-          data: { to: selectedAdmin, ques: query, type: 0 },
+          to: selectedAdmin, 
+          ques: query, 
+          type: 0,
           id: auth.userId,
           access_token: auth.access_token
         })

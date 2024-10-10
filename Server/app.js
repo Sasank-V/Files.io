@@ -11,6 +11,8 @@ import adminRouter from "./controllers/Admin.js";
 import authRouter from "./controllers/Auth.js";
 import refreshRouter from "./controllers/Refresh.js";
 
+import dotenv from "dotenv";
+dotenv.config()
 //To do at the end
 //Remove the parameter isAdmin set to true for all the users signing up in Auth.js
 
@@ -48,7 +50,7 @@ const app = express();
 connectDB();
 
 app.use(cors({
-    origin: 'http://localhost:5173', // Replace with your frontend URL
+    origin: process.env.CLIENT_URL, // Replace with your frontend URL
     credentials: true,
 }));
 app.use(express.urlencoded({ extended: true }));

@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const dbUrl = process.env.ATLASDB_URL;
-let localUrl = 'mongodb://localhost:27017/FileIO';
+// let localUrl = 'mongodb://localhost:27017/FileIO';
 const connectDB = async () => {
     try {
         await mongoose.connect(dbUrl);

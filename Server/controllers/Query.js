@@ -69,7 +69,6 @@ router.post("/post", async (req, res) => {
     try {
         const { to, ques, type } = req.body.data;
         const from = req.body.id;
-        console.log(from);
         // Validate request body with Joi
         const { error } = querySchema.validate({ to: to, ques: ques, type: type });
         if (error) {
@@ -150,7 +149,6 @@ router.put("/reply/admin/:queryId", async (req, res) => {
         const data = req.body.data;
         let reply = data.reply;
 
-        console.log(reply);
 
         if (!reply || reply === "") {
             return res.status(402).send({

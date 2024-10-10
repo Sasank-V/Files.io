@@ -50,8 +50,10 @@ const app = express();
 connectDB();
 
 app.use(cors({
-    origin: process.env.CLIENT_URL, // Replace with your frontend URL
-    credentials: true,
+    origin: process.env.CLIENT_URL, // Ensure this matches exactly with the frontend URL
+    credentials: true, // Allow credentials
+    methods: 'GET,POST,PUT,DELETE', // Allow necessary HTTP methods
+    allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
 }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

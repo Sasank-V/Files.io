@@ -11,6 +11,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { BookOpen } from "lucide-react"
+import { Link } from "react-router-dom"
 import gsap from 'gsap'
 
 const AddSubjectCard = ({ onAdd }) => {
@@ -137,6 +140,28 @@ const AddSubjectCard = ({ onAdd }) => {
   )
 }
 
+
+const NoComponentsCard = ({ text }) => {
+    return (
+        <Card className="w-full max-w-md mx-auto overflow-hidden" style={{
+            background: 'linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 50%, #1A1A1A 100%)'
+        }}>
+            <CardHeader className="relative z-10">
+                <CardTitle className="text-xl text-center text-[#fe965e]">No {text} Available</CardTitle>
+                <CardDescription className="text-center text-gray-300">
+                    There are currently no {text} 
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="relative z-10 flex flex-col items-center">
+                <BookOpen className="w-16 h-16 text-[#fe965e] mb-4" />
+                <p className="text-center mb-4 text-gray-200">
+                    Check back later to continue your learning journey.
+                </p>
+            </CardContent>
+        </Card>
+    )
+}
+
 const LearnPage = () => {
     const [subjects, setSubjects] = useState([])
     const [subFetched, setSubFetched] = useState(false)
@@ -175,9 +200,24 @@ const LearnPage = () => {
         }
     }
 
+    if(subjects.length == 0){
+      if(auth.isAdmin){
+          return(
+                  <div className="p-2 h-full">
+                      <AddSubjectCard onAdd={handleAddSubject} />
+                  </div>
+                )
+        }
+      return (
+        <div className='w-full h-[95vh] flex justify-center items-center'>
+          <NoComponentsCard text="Subjects"/>
+        </div>
+      )
+    }
+
     if (!subFetched) {
         return (
-            <div className="w-full h-full">
+            <div className="w-full h-full flex justify-center items-center">
                 <LoadingComponent text="Loading" />
             </div>
         )

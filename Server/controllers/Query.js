@@ -12,8 +12,8 @@ import Query from "../models/queries.js";
 //id - userId 
 router.post("/all/", async (req, res) => {
     try {
-        console.log("Received request to /api/query/all");
-        console.log("Request body:", req.body);
+        // console.log("Received request to /api/query/all");
+        // console.log("Request body:", req.body);
         const { id } = req.body;
         // console.log(id);
         const user = await User.findById(id).populate("queries");

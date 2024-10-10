@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
     }
 
     const refresh_token = cookies.jwt;
-    console.log(refresh_token);
+    // console.log(refresh_token);
 
     const foundUser = await User.findOne({ refresh_token: refresh_token });
     if (!foundUser) {
@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
             );
 
             const data = { access_token: access_token, isAdmin: foundUser.isAdmin, username: foundUser.username }
-            console.log(data)
+            // console.log(data)
 
             res.status(201).json(data);
         }

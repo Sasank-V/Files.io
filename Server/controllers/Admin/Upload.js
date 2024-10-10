@@ -73,7 +73,6 @@ router.post("/syll/:subId", async (req, res) => {
             });
         }
         let syllUrl = req.body.data.url;
-        console.log(syllUrl);
         if (!syllUrl) {
             return res.status(401).send({
                 success: false,
@@ -155,7 +154,6 @@ router.post("/comp/:subId", async (req, res) => {
         }
 
         if (subject.admin != userId) {
-            console.log(subject.admin, " ", userId)
             return res.status(401).send({
                 success: false,
                 message: "Unauthorized Request",

@@ -57,16 +57,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+
+
 app.use("/api/refresh", refreshRouter)
 app.use("/api/learn", learnRouter);
 app.use("/api/auth", authRouter);
-app.use(verifyJWT);
-app.use("/api/query", queryRouter);
-app.use("/api/admin", adminRouter);
+app.use("/api/query",verifyJWT,queryRouter);
+app.use("/api/admin", verifyJWT,adminRouter);
 
 app.get("/", (req, res) => {
     res.send("Hello, I am groot");
-})
+});
 
 app.listen(8080, () => {
     console.log("Server is listening on port 8080");

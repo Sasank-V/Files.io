@@ -13,8 +13,8 @@ import Query from "../models/queries.js";
 router.post("/all/", async (req, res) => {
     try {
         console.log("Received request to /api/query/all");
-    console.log("Request body:", req.body);
-        const {id} = req.body;
+        console.log("Request body:", req.body);
+        const { id } = req.body;
         // console.log(id);
         const user = await User.findById(id).populate("queries");
         if (!user) {
@@ -67,11 +67,11 @@ router.post("/admins", async (req, res) => {
 //{ to: user_id , ques : "",type : 0/1}
 router.post("/post", async (req, res) => {
     try {
-        const { to, ques,type } = req.body.data;
+        const { to, ques, type } = req.body.data;
         const from = req.body.id;
         console.log(from);
         // Validate request body with Joi
-        const { error } = querySchema.validate({to: to, ques : ques, type : type});
+        const { error } = querySchema.validate({ to: to, ques: ques, type: type });
         if (error) {
             return res.status(400).send("Send a valid object");
         }
@@ -258,10 +258,10 @@ router.delete("/delete/:queryId", async (req, res) => {
 
 //To Approve the user request for admin access
 //Result = 1 - Approved , 0 - Rejected
-router.post("/approve/:queryId/:result", async (req,res)=>{
+router.post("/approve/:queryId/:result", async (req, res) => {
     try {
         let userId = req.body.id;
-        let { queryId,result} = req.params;
+        let { queryId, result } = req.params;
         const currUser = await User.findById(userId);
         const currQuery = await Query.findById(queryId);
         if (!currQuery) {
@@ -277,7 +277,7 @@ router.post("/approve/:queryId/:result", async (req,res)=>{
             });
         }
         const fromUser = await User.findById(currQuery.from);
-        if(result == 1) fromUser.isAdmin = true;
+        if (result == 1) fromUser.isAdmin = true;
         currQuery.status = true;
         await fromUser.save();
         await currQuery.save();

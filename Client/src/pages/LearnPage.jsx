@@ -177,7 +177,7 @@ const LearnPage = () => {
     useEffect(() => {
         const fetchSubjects = async () => {
             try {
-                const res = await axios.get("/learn/all")
+                const res = await axios.get("/learn/all",{withCredentials:true})
                 const data = res.data.data
 
                 setSubjects(data)

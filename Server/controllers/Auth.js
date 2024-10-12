@@ -65,10 +65,12 @@ router.post("/signup", async (req, res) => {
     }
 });
 
+let cookieSameSite = (process.env.NODE_ENV === 'production' ? 'None' : 'Strict');
+console.log(cookieSameSite);
 const cookieOptions = {
     httpOnly: true,      // Prevents JavaScript access to the cookie
     secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-    sameSite: 'Strict',  // Helps protect against CSRF
+    sameSite: cookieSameSite,  // For CORS Request
     maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
 };
 

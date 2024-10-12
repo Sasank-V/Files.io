@@ -72,6 +72,12 @@ app.get("/", (req, res) => {
     res.send("Hello, I am groot");
 });
 
+if (process.env.NODE_ENV === 'production') {
+    console.log('Running in production mode');
+} else {
+    console.log('Running in development mode');
+}
+
 app.listen(8080, () => {
     console.log("Server is listening on port 8080");
 })

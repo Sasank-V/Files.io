@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import axios from '@/api/axios'
 import useAuth from '@/hooks/useAuth'
 import { toast } from 'react-toastify'
+import LoadingComponent from '@/components/loading'
 
 export default function QueryPage() {
   const [query, setQuery] = useState('')
@@ -17,6 +18,7 @@ export default function QueryPage() {
   const [admins, setAdmins] = useState([])
   const [selectedAdmin, setSelectedAdmin] = useState('')
   const { auth } = useAuth()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     fetchQueries()
@@ -46,12 +48,14 @@ export default function QueryPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (query.trim() && selectedAdmin) {
+      setLoading(true)
       try {
         await axios.post('/query/post', {
           to: selectedAdmin, ques: query, type: 0,
           access_token: auth.access_token
         })
         toast.success('Query submitted successfully')
+        setLoading(false)
         setQuery('')
         fetchQueries()
       } catch (error) {
@@ -76,16 +80,19 @@ export default function QueryPage() {
   }
 
   return (
-    <main className='flex w-full h-full overflow-y-scroll bg-white'>
-      <div className="md:w-[50%] w-full p-10">
-        <div className="w-full h-full flex flex-col p-10 justify-center items-center">
-          <div className="md:text-[60px] text-[30px] font-semibold justify-start text-center text-gray-800">
+    <main className='flex w-full min-h-screen bg-white flex-col lg:flex-row'>
+      <div className="w-full lg:w-1/2 h-[95vh] p-4 md:p-10 flex justify-center items-center">
+        <div className="w-full flex flex-col justify-center items-center">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-center text-gray-800 mb-2">
             Student Queries
-          </div>
-          <div className="text-[24px] font-semibold text-[#fe965e] mt-2 mb-10">
+          </h1>
+          <p className="text-xl md:text-2xl font-semibold text-[#fe965e] mb-8">
             Ask your questions and view responses
-          </div>
-          <form onSubmit={handleSubmit} className='w-full max-w-[400px]'>
+          </p>
+          {loading ? <div className='w-full h-[50vh]'>
+            <LoadingComponent text="Posting Query"/>
+          </div> : 
+          <form onSubmit={handleSubmit} className='w-full max-w-[400px] mb-8'>
             <div className='space-y-4'>
               <div className='space-y-2'>
                 <Label htmlFor="admin" className="text-gray-700">Select Admin</Label>
@@ -114,18 +121,22 @@ export default function QueryPage() {
                 />
               </div>
             </div>
-            <div className='flex justify-center mt-[50px] w-full'>
-              <Button type="submit" className="w-[200px] bg-[#fe965e] hover:bg-[#e8854e] rounded-md p-3 text-lg text-white text-center">
-                Submit Query
+            <div className='flex justify-center mt-6'>
+              <Button 
+                type="submit" 
+                className="w-full md:w-[200px] bg-[#fe965e] hover:bg-[#e8854e] rounded-md p-3 text-lg text-white text-center"
+                disabled={loading}
+              >
+                {loading ? 'Submitting...' : 'Submit Query'}
               </Button>
             </div>
-          </form>
+          </form>}
         </div>
       </div>
-      <div className='md:flex hidden w-[50%] justify-center h-[95vh]'>
-        <div className='w-[90%] h-[90%] flex flex-col items-center justify-center p-6 bg-[#f9d9c6] rounded-lg shadow-lg'>
+      <div className='w-full lg:w-1/2 lg:h-[95vh] flex justify-center px-4 md:px-10 mb-10  lg:mt-10'>
+        <div className='w-full max-w-[600px] flex flex-col items-center justify-center p-6 bg-[#f9d9c6] rounded-lg shadow-lg'>
           <h2 className="text-2xl font-semibold mb-4 text-[#fe965e]">Your Queries</h2>
-          <ScrollArea className="h-[300px] w-full rounded-md border border-[#fe965e] p-4 bg-[#222222] mb-6">
+          <ScrollArea className="h-[200px] lg:h-[250px] w-full rounded-md border border-[#fe965e] p-4 bg-[#222222] mb-6">
             {queries.map((item, index) => (
               <div key={item._id} className={`py-4 ${index !== queries.length - 1 ? 'border-b border-gray-700' : ''}`}>
                 <div className="flex justify-between items-start">
@@ -138,7 +149,7 @@ export default function QueryPage() {
             ))}
           </ScrollArea>
           <h2 className="text-2xl font-semibold mb-4 text-[#fe965e]">Responses</h2>
-          <ScrollArea className="h-[300px] w-full rounded-md border border-[#fe965e] p-4 bg-[#222222]">
+          <ScrollArea className="h-[200px] lg:h-[250px] w-full rounded-md border border-[#fe965e] p-4 bg-[#222222]">
             {queries.filter(item => item.status).map((item, index) => (
               <div key={item._id} className={`py-4 ${index !== queries.filter(q => q.status).length - 1 ? 'border-b border-gray-700' : ''}`}>
                 <div className="font-semibold text-gray-200">Q: {item.ques}</div>

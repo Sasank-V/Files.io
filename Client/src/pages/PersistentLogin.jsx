@@ -6,12 +6,13 @@ import { Outlet } from "react-router-dom"
 
 
 const PersistentLogin = () => {
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const refresh = useRefreshToken();
     const { auth } = useAuth();
 
     useEffect(() => {
         const verifyRefrresfToken = async () => {
+            setIsLoading(true);
             try {
                 await refresh();
             } catch (err) {

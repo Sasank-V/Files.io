@@ -55,8 +55,6 @@ const TeacherQueriesPage = () => {
         }
     }
 
-    console.log(queries);
-
     return (
         <main className='flex flex-col lg:flex-row w-full min-h-screen bg-white overflow-hidden'>
             <div className="w-full lg:w-1/2 p-4 lg:p-10">

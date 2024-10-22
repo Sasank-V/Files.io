@@ -11,10 +11,10 @@ const PersistentLogin = () => {
     const { auth } = useAuth();
 
     useEffect(() => {
+        if(Object.keys(auth).length == 0) return;
         const verifyRefrresfToken = async () => {
             setIsLoading(true);
             try {
-                console.log("I am refreshing");
                 await refresh();
             } catch (err) {
                 console.error(err);

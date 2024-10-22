@@ -55,6 +55,8 @@ const TeacherQueriesPage = () => {
         }
     }
 
+    console.log(queries);
+
     return (
         <main className='flex flex-col lg:flex-row w-full min-h-screen bg-white overflow-hidden'>
             <div className="w-full lg:w-1/2 p-4 lg:p-10">
@@ -106,7 +108,7 @@ const TeacherQueriesPage = () => {
                             <ScrollArea className="h-[50vh] lg:h-[calc(90vh-120px)] w-full rounded-md border border-[#fe965e] p-4 bg-gray-800">
                                 {queries.filter(query => !query.status).map((query) => (
                                     <div key={query._id} className="mb-6 last:mb-0 p-4 border border-gray-700 rounded-lg">
-                                        <div className="font-semibold text-[#fe965e] mb-2 text-sm sm:text-base">Student: {query.from}</div>
+                                        <div className="font-semibold text-[#fe965e] mb-2 text-sm sm:text-base">Student: {query.fromUser}</div>
                                         <div className="font-medium text-gray-200 mb-4 text-xs sm:text-sm md:text-base">Q: {query.ques}</div>
                                         <Button
                                             onClick={() => setSelectedQuery(query)}

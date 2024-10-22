@@ -14,6 +14,7 @@ const PersistentLogin = () => {
         const verifyRefrresfToken = async () => {
             setIsLoading(true);
             try {
+                console.log("I am refreshing");
                 await refresh();
             } catch (err) {
                 console.error(err);

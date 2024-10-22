@@ -18,22 +18,20 @@ import useAuth from '@/hooks/useAuth';
 import PersistentLogin from './pages/PersistentLogin';
 
 const App = () => {
-  const isAdmin = 0;
   const { auth } = useAuth()
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route element={<Layout />}>
-        <Route element={<PersistentLogin />}>
           <Route path="/" element={<HomePage />} />
-          {auth?.isAdmin && <Route path="/dashboard" element={<TeacherHomePage />} />}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/learn" element={<LearnPage />} />
           <Route element={<Subject />}>
             <Route path="/subject/:id" element={<DynamicSubjectComponent />} />
           </Route>
-
+        <Route element={<PersistentLogin />}>
+          {auth?.isAdmin && <Route path="/dashboard" element={<TeacherHomePage />} />}
           <Route element={<RequireAuth />}>
             <Route path="/queries" element={auth?.isAdmin ? <QueriesAdminPage /> : <QueriesPage />} />
             <Route path="*" element={<NotFound />} />

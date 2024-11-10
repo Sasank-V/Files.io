@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { BookOpen } from "lucide-react"
-import { Link } from "react-router-dom"
 import gsap from 'gsap'
 
 const AddSubjectCard = ({ onAdd }) => {
